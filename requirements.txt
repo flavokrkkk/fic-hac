@@ -1,7 +1,6 @@
 fastapi
 uvicorn
-sqlalchemy
-greenlet
+tortoise
 aiobotocore
 pyJWT
 redis
