@@ -1,9 +1,9 @@
 fastapi
 uvicorn
-tortoise
+tortoise-orm[asyncpg]
 aiobotocore
 pyJWT
 redis
-asyncpg
 bcrypt
 passlib
+environs

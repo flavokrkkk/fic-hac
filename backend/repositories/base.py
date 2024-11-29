@@ -36,7 +36,7 @@ class BaseRepository[ModelType](ABC):
         raise NotImplementedError
 
 
-class TortoiseOrmRepository[ModelType](BaseRepository):
+class TortoiseRepository[ModelType](BaseRepository):
     model: models.Model = None
     
     async def get_item(self, item_id: int | UUID4 | str) -> ModelType | None:
