@@ -2,6 +2,10 @@ from environs import Env
 from pydantic import BaseModel
 
 
+env = Env()
+env.read_env()
+
+
 class DatabaseConfig(BaseModel):
     db_name: str
     db_user: str
@@ -30,8 +34,6 @@ class RedisConfig(BaseModel):
 
 
 def load_database_config() -> DatabaseConfig:
-    env = Env()
-    env.read_env()
     return DatabaseConfig(
         db_name=env.str("DB_NAME"),
         db_user=env.str("DB_USER"),
@@ -42,8 +44,6 @@ def load_database_config() -> DatabaseConfig:
 
 
 def load_jwt_config() -> JwtConfig:
-    env = Env()
-    env.read_env()
     return JwtConfig(
         jwt_secret=env.str("JWT_SECRET"),
         algorithm=env.str("JWT_ALGORITHM"),
@@ -52,8 +52,6 @@ def load_jwt_config() -> JwtConfig:
 
 
 def load_s3_storage_config() -> S3StorageConfig:
-    env = Env()
-    env.read_env()
     return S3StorageConfig(
         bucket_name=env.str("AWS_BUCKET_NAME"),
         access_key_id=env.str("AWS_ACCESS_KEY_ID"),
@@ -64,12 +62,8 @@ def load_s3_storage_config() -> S3StorageConfig:
 
 
 def load_redis_config() -> RedisConfig:
-    env = Env()
-    env.read_env()
     return RedisConfig(host=env.str("REDIS_HOST"), port=env.int("REDIS_PORT"))
 
 
-async def load_here_geocoding_api_key() -> str:
-    env = Env()
-    env.read_env()
-    return env.str("HERE_GEOCODING_API_KEY")
+def load_cesium_api_key() -> str:
+    return env.str("CESIUM_TOKEN")

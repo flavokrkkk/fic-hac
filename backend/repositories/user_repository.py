@@ -1,6 +1,6 @@
-from backend.repositories.base import TortoiseRepository
+from backend.repositories.base import SqlAlchemyRepository
 from backend.database.models.user import User
 
 
-class UserRepository(TortoiseRepository):
+class UserRepository(SqlAlchemyRepository):
     model = User

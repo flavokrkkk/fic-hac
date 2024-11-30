@@ -4,16 +4,21 @@ from fastapi import FastAPI, Depends, Request
 from fastapi.middleware.cors import CORSMiddleware
 
 # from backend.utils.dependencies import get_current_user_dependency
-from backend.database.connection.connection import init_database
+from backend.database.connection.connection import DatabaseConnection
 from backend.routers.auth import router as auth_router
+from backend.routers.location import router as location_router
+from backend.routers.user import router as user_router
+from backend.utils.config.config import load_database_config
+from backend.utils.dependencies.dependencies import get_current_user_dependency
+
 
 async def lifespan(app: FastAPI):
-    await init_database()
+    app.state.db_connection = await DatabaseConnection(load_database_config())()
     yield
 
 
 app = FastAPI(lifespan=lifespan)
-# PROTECTED = Depends(get_current_user_dependency)
+PROTECTED = Depends(get_current_user_dependency)
 
 
 origins = ["http://localhost:5173"]
@@ -27,6 +32,8 @@ app.add_middleware(
 
 
 app.include_router(auth_router)
+app.include_router(location_router, dependencies=[PROTECTED])
+app.include_router(user_router)
 
 @app.exception_handler(RequestValidationError)
 async def validation_exception_handler(request: Request, exc: RequestValidationError):

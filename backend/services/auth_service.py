@@ -10,7 +10,6 @@ from backend.database.models.user import User
 from backend.repositories.user_repository import UserRepository
 from backend.services.base_service import BaseService
 from backend.utils.config.config import (
-    load_here_geocoding_api_key,
     load_jwt_config,
 )
 from backend.errors.auth_errors import (
@@ -31,7 +30,7 @@ class AuthService(BaseService):
         self.context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
     async def get_user_by_email(self, email: str) -> User | None:
-        user = await self.repository.get_by_attribute("email", email)
+        user = await self.repository.get_by_attribute(self.repository.model.email, email)
         return None if not user else user[0]
 
     async def hash_password(self, password: str) -> str:
@@ -70,21 +69,17 @@ class AuthService(BaseService):
                 algorithms=[self.config.algorithm],
             )
             email = payload.get("sub")
-
             if email is None:
                 raise InvalidToken
-
             return email
         except (InvalidTokenError, AttributeError):
             raise InvalidToken
 
     async def check_user_exist(self, email: str) -> User:
         user = await self.get_user_by_email(email)
-
         if user is None:
             raise InvalidToken
-
-        return await self.model_dump(user, BaseUserModel)
+        return user.id
 
     async def register_user(self, form: RegisterForm) -> User:
         user = await self.get_user_by_email(form.email)

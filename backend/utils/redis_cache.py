@@ -2,11 +2,12 @@ from typing import Any
 
 from redis import Redis
 
-from backend.utils.config.config import RedisConfig
+from backend.utils.config.config import RedisConfig, load_redis_config
 
 
 class RedisCache:
-    def __init__(self, config: RedisConfig) -> None:
+    def __init__(self) -> None:
+        config = load_redis_config()
         self.redis: Redis = Redis(host=config.host, port=config.port)
 
     async def set_item(self, key: str, value: Any) -> None:

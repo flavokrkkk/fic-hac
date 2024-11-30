@@ -1,17 +1,22 @@
-from tortoise import Tortoise
+from sqlalchemy import NullPool
+from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
+from backend.database.models.base import Base
+from backend.utils.config.config import DatabaseConfig
 
-import backend.database.models as models
-from backend.utils.config.config import load_database_config
 
+class DatabaseConnection:
+    def __init__(self, config: DatabaseConfig):
+        self._engine = create_async_engine(
+            url=f"postgresql+asyncpg://{config.db_user}:{config.db_pass}"
+            f"@{config.db_host}:{config.db_port}/{config.db_name}",
+            poolclass=NullPool,
+        )
 
-async def init_database():
-    config = load_database_config()
-    await Tortoise.init(
-        db_url="postgres://{db_user}:{db_pass}@{db_host}:{db_port}/{db_name}".format(
-            **config.model_dump()
-        ),
-        modules={"models": [
-            f"backend.database.models.{model}" for model in models.__all__]
-        },
-    )
-    await Tortoise.generate_schemas()
+    async def get_session(self) -> AsyncSession:
+        return AsyncSession(bind=self._engine)
+
+    async def __call__(self):
+        async with self._engine.begin() as conn:
+            await conn.run_sync(Base.metadata.create_all)
+
+        return self

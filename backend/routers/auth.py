@@ -9,9 +9,11 @@ from backend.dto.auth_dto import (
 )
 from backend.dto.user_dto import BaseUserModel
 from backend.services import AuthService
+from backend.services.user_service import UserService
 from backend.utils.dependencies.dependencies import (
     get_auth_service,
     get_current_user_dependency,
+    get_user_service,
 )
 
 
@@ -20,9 +22,10 @@ router = APIRouter(prefix="/api/auth", tags=["auth"])
 
 @router.get("/current_user")
 async def get_current_user(
-    current_user: BaseUserModel = Depends(get_current_user_dependency),
+    user_service: Annotated[UserService, Depends(get_user_service)],
+    current_user: int = Depends(get_current_user_dependency)
 ) -> BaseUserModel:
-    return current_user
+    return await user_service.get_current_user(current_user)
 
 
 @router.post("/login", status_code=200)
