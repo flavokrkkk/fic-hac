@@ -33,7 +33,6 @@ async def get_session(
         await session.close()
 
 
-
 async def get_s3_client():
     config = load_s3_storage_config()
     session = AioSession()
@@ -52,7 +51,9 @@ async def get_s3_client():
 
 
 async def get_auth_service(session=Depends(get_session)):
-    return services.AuthService(repository=repositories.UserRepository(session=session))
+    return services.AuthService(
+        repository=repositories.UserRepository(session=session)
+    )
 
 
 async def get_current_user_dependency(
@@ -64,8 +65,18 @@ async def get_current_user_dependency(
 
 
 async def get_location_service(session=Depends(get_session)):
-    return services.LocationService(repository=repositories.LocationRepository(session=session))
+    return services.LocationService(
+        repository=repositories.LocationRepository(session=session)
+    )
 
 
 async def get_user_service(session=Depends(get_session)):
-    return services.UserService(repository=repositories.UserRepository(session=session))
+    return services.UserService(
+        repository=repositories.UserRepository(session=session)
+    )
+
+
+async def get_geo_object_service(session=Depends(get_session)):
+    return services.GeoObjectService(
+        repository=repositories.GeoObjectRepository(session=session)
+    )

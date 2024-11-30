@@ -1,3 +1,4 @@
 from backend.repositories.user_repository import UserRepository
 from backend.repositories.base import BaseRepository
 from backend.repositories.location import LocationRepository
+from backend.repositories.geo_object_repository import GeoObjectRepository

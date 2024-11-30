@@ -23,7 +23,7 @@ router = APIRouter(prefix="/api/auth", tags=["auth"])
 @router.get("/current_user")
 async def get_current_user(
     user_service: Annotated[UserService, Depends(get_user_service)],
-    current_user: int = Depends(get_current_user_dependency)
+    current_user: int = Depends(get_current_user_dependency),
 ) -> BaseUserModel:
     return await user_service.get_current_user(current_user)
 
@@ -54,7 +54,5 @@ async def register_user(
     new_user = await auth_service.register_user(form)
     token = await auth_service.create_access_token(form.email)
     return RegisterResponse(
-        detail="Вы успешно зарегистрировались!", 
-        new_user=new_user, 
-        token=token
+        detail="Вы успешно зарегистрировались!", new_user=new_user, token=token
     )

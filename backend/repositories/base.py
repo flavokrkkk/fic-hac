@@ -38,7 +38,6 @@ class BaseRepository[ModelType](ABC):
 
 
 class SqlAlchemyRepository[ModelType](BaseRepository):
-
     def __init__(self, session: AsyncSession):
         self.session = session
 

@@ -30,7 +30,9 @@ class AuthService(BaseService):
         self.context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
     async def get_user_by_email(self, email: str) -> User | None:
-        user = await self.repository.get_by_attribute(self.repository.model.email, email)
+        user = await self.repository.get_by_attribute(
+            self.repository.model.email, email
+        )
         return None if not user else user[0]
 
     async def hash_password(self, password: str) -> str:
@@ -91,4 +93,3 @@ class AuthService(BaseService):
         new_user = await self.repository.add_item(**form.model_dump())
 
         return await self.model_dump(new_user, BaseUserModel)
-

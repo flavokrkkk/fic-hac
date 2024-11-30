@@ -9,6 +9,6 @@ class User(Base):
     email: Mapped[str]
     password: Mapped[str]
 
-    saved_locations: Mapped[list['UserLocation']] = relationship(
+    saved_locations: Mapped[list["UserLocation"]] = relationship(
         "UserLocation", back_populates="user", lazy="selectin"
     )

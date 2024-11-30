@@ -1,19 +1,25 @@
+import asyncio
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 from fastapi import FastAPI, Depends, Request
 from fastapi.middleware.cors import CORSMiddleware
 
+from backend.database.connection.mock_db import create_test_db
+import backend.routers as routers
+
 # from backend.utils.dependencies import get_current_user_dependency
 from backend.database.connection.connection import DatabaseConnection
-from backend.routers.auth import router as auth_router
-from backend.routers.location import router as location_router
-from backend.routers.user import router as user_router
 from backend.utils.config.config import load_database_config
-from backend.utils.dependencies.dependencies import get_current_user_dependency
+from backend.utils.dependencies.dependencies import get_current_user_dependency, get_session
 
 
 async def lifespan(app: FastAPI):
-    app.state.db_connection = await DatabaseConnection(load_database_config())()
+    app.state.db_connection = await DatabaseConnection()()
+    try:
+        session = await app.state.db_connection.get_session()
+        await create_test_db(session=session)
+    finally:
+        await session.close()
     yield
 
 
@@ -31,12 +37,16 @@ app.add_middleware(
 )
 
 
-app.include_router(auth_router)
-app.include_router(location_router, dependencies=[PROTECTED])
-app.include_router(user_router)
+app.include_router(routers.auth_router)
+app.include_router(routers.location_router, dependencies=[PROTECTED])
+app.include_router(routers.user_router)
+app.include_router(routers.geo_object_router)
+
 
 @app.exception_handler(RequestValidationError)
-async def validation_exception_handler(request: Request, exc: RequestValidationError):
+async def validation_exception_handler(
+    request: Request, exc: RequestValidationError
+):
     try:
         errors = []
 

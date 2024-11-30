@@ -1,6 +1,8 @@
 fastapi
 uvicorn
-tortoise-orm[asyncpg]
+asyncpg
+sqlalchemy
+greenlet
 aiobotocore
 pyJWT
 redis
