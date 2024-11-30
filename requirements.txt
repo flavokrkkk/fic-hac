@@ -1,0 +1,9 @@
+fastapi
+uvicorn
+tortoise-orm[asyncpg]
+aiobotocore
+pyJWT
+redis
+bcrypt
+passlib
+environs
