@@ -1,9 +1,11 @@
-import { RefObject } from "react"
+import { RefObject, useState } from "react"
 import { IGeoObject } from "@entities/objects"
-import { EFilterTypes } from "@shared/utils/filterType"
 import * as Cesium from "cesium"
 
 export const useGeoObject = (viewerRef: RefObject<Cesium.Viewer>) => {
+  const [isModalVisible, setIsModalVisible] = useState(false)
+  const [selectedObject, setSelectedObject] = useState<IGeoObject | null>(null)
+
   const processGeoJsonEntities = (dataSource: Cesium.DataSource, viewer: Cesium.Viewer): void => {
     try {
       const entities = dataSource.entities.values
@@ -16,84 +18,74 @@ export const useGeoObject = (viewerRef: RefObject<Cesium.Viewer>) => {
 
       entities.forEach(entity => {
         const type: IGeoObject["type"] = entity.properties?.type?.getValue() || "unknown"
-        const color = getColorByType(type as EFilterTypes)
-
+        const status: string = entity.properties?.status?.getValue() || "unknown"
         if (entity.polyline) {
-          entity.polyline.material = new Cesium.ColorMaterialProperty(color)
-          entity.polyline.width = new Cesium.ConstantProperty(4)
+          entity.polyline.material = new Cesium.ColorMaterialProperty(Cesium.Color.TRANSPARENT)
+          entity.polyline.width = new Cesium.ConstantProperty(0)
+        }
+        const positions = entity.polyline?.positions?.getValue(Cesium.JulianDate.now())
+        const midpoint = positions?.[0] || entity.position?.getValue(Cesium.JulianDate.now())
 
-          const positions = entity.polyline.positions?.getValue(Cesium.JulianDate.now())
-          if (positions && positions.length > 0) {
-            const midpoint = positions[0]
+        if (midpoint) {
+          entity.billboard = new Cesium.BillboardGraphics({
+            image: "/locateIcon.svg",
+            scale: 0.6,
+            verticalOrigin: Cesium.VerticalOrigin.BOTTOM
+          })
 
-            entity.label = new Cesium.LabelGraphics({
-              text: `Тип: ${type}`,
-              font: "14pt sans-serif",
-              fillColor: Cesium.Color.WHITE,
-              outlineColor: Cesium.Color.BLACK,
-              outlineWidth: 2,
-              pixelOffset: new Cesium.Cartesian2(0, -10),
-              verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
-              scale: 0.8
-            })
+          entity.label = new Cesium.LabelGraphics({
+            text: `Тип: ${type}\nСтатус: ${status}`,
+            font: "14pt sans-serif",
+            fillColor: Cesium.Color.WHITE,
+            outlineColor: Cesium.Color.BLACK,
+            outlineWidth: 2,
+            pixelOffset: new Cesium.Cartesian2(0, -50),
+            verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
+            scale: 0.8
+          })
 
-            entity.position = midpoint
-          }
+          entity.position = midpoint
         }
       })
 
-      addHighlightOnHover(viewer, entities)
+      viewer.screenSpaceEventHandler.setInputAction(
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (movement: any) => {
+          const pickedObject = viewer.scene.pick(movement.position)
+
+          if (Cesium.defined(pickedObject) && Cesium.defined(pickedObject.id)) {
+            const pickedEntity = pickedObject.id
+            const geoObjectInfo: IGeoObject = {
+              id: pickedEntity.id,
+              properties: {
+                name: pickedEntity.properties?.name?.getValue() || "Unknown",
+                type: pickedEntity.properties?.type?.getValue() || "Unknown",
+                status: pickedEntity.properties?.status?.getValue() || "Unknown",
+                depth: pickedEntity.properties?.depth?.getValue() || 0
+              },
+              geometry: pickedEntity.geometry,
+              type: ""
+            }
+
+            setSelectedObject(geoObjectInfo)
+            setIsModalVisible(true)
+
+            viewer.zoomTo(pickedEntity)
+          }
+        },
+        Cesium.ScreenSpaceEventType.LEFT_CLICK
+      )
     } catch (error) {
       console.error("Ошибка обработки GeoJSON объектов:", error)
     }
   }
 
-  const addHighlightOnHover = (viewer: Cesium.Viewer, entities: Cesium.Entity[]): void => {
-    let previousPickedEntity: Cesium.Entity | null = null
-
-    viewer.screenSpaceEventHandler.setInputAction(
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (movement: any) => {
-        const pickedObject = viewer.scene.pick(movement.endPosition)
-
-        if (Cesium.defined(pickedObject) && Cesium.defined(pickedObject.id)) {
-          const pickedEntity = pickedObject.id
-
-          if (entities.includes(pickedEntity)) {
-            if (previousPickedEntity && previousPickedEntity !== pickedEntity) {
-              resetEntityHighlight(previousPickedEntity)
-            }
-
-            if (pickedEntity.polyline) {
-              pickedEntity.polyline.material = new Cesium.ColorMaterialProperty(Cesium.Color.YELLOW)
-            }
-
-            previousPickedEntity = pickedEntity
-          }
-        } else if (previousPickedEntity) {
-          resetEntityHighlight(previousPickedEntity)
-          previousPickedEntity = null
-        }
-      },
-      Cesium.ScreenSpaceEventType.MOUSE_MOVE
-    )
+  const handleOk = () => {
+    setIsModalVisible(false)
   }
 
-  const resetEntityHighlight = (entity: Cesium.Entity): void => {
-    const originalColor = getColorByType(entity.properties?.type?.getValue() || "unknown")
-    if (entity.polyline) {
-      entity.polyline.material = new Cesium.ColorMaterialProperty(originalColor)
-    }
-  }
-
-  const getColorByType = (type: EFilterTypes) => {
-    const colorObject = {
-      [EFilterTypes.PIPELINE]: Cesium.Color.RED,
-      [EFilterTypes.CABLE]: Cesium.Color.BLUE,
-      [EFilterTypes.GAS_PIPELINE]: Cesium.Color.DARKGREEN
-    }
-
-    return colorObject[type]
+  const handleCancel = () => {
+    setIsModalVisible(false)
   }
 
   const handleLoad = (dataSource: Cesium.DataSource) => {
@@ -103,6 +95,10 @@ export const useGeoObject = (viewerRef: RefObject<Cesium.Viewer>) => {
   }
 
   return {
-    handleLoad
+    handleLoad,
+    isModalVisible,
+    selectedObject,
+    handleOk,
+    handleCancel
   }
 }

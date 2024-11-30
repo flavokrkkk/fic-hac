@@ -5,6 +5,7 @@ export interface IGeoObject {
     name: string
     type: string
     depth: number
+    status: string
   }
   geometry: {
     type: string

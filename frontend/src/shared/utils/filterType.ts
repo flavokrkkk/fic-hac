@@ -3,3 +3,9 @@ export const enum EFilterTypes {
   CABLE = "Кабель",
   GAS_PIPELINE = "Газопровод"
 }
+
+export const enum EFilterStatusTypes {
+  ACTIVE = "Активный",
+  WAITING = "Ожидающий",
+  INACTIVE = "Неактивный"
+}

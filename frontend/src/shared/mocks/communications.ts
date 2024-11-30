@@ -9,7 +9,8 @@ export const communications: IGeoWrapper = {
       properties: {
         name: "Трубопровод 1",
         type: "Трубопровод",
-        depth: 10
+        depth: 10,
+        status: "Активный"
       },
       geometry: {
         type: "LineString",
@@ -25,7 +26,8 @@ export const communications: IGeoWrapper = {
       properties: {
         name: "Кабель 1",
         type: "Кабель",
-        depth: 5
+        depth: 5,
+        status: "Активный"
       },
       geometry: {
         type: "LineString",
@@ -41,7 +43,8 @@ export const communications: IGeoWrapper = {
       properties: {
         name: "Трубопровод 2",
         type: "Трубопровод",
-        depth: 15
+        depth: 15,
+        status: "Неактивный"
       },
       geometry: {
         type: "LineString",
@@ -58,7 +61,8 @@ export const communications: IGeoWrapper = {
       properties: {
         name: "Кабель 2",
         type: "Кабель",
-        depth: 12
+        depth: 12,
+        status: "Ожидающий"
       },
       geometry: {
         type: "LineString",
@@ -75,7 +79,8 @@ export const communications: IGeoWrapper = {
       properties: {
         name: "Газопровод 1",
         type: "Газопровод",
-        depth: 8
+        depth: 8,
+        status: "Активный"
       },
       geometry: {
         type: "LineString",
@@ -92,7 +97,8 @@ export const communications: IGeoWrapper = {
       properties: {
         name: "Трубопровод 3",
         type: "Трубопровод",
-        depth: 20
+        depth: 20,
+        status: "Неактивный"
       },
       geometry: {
         type: "LineString",
@@ -108,7 +114,8 @@ export const communications: IGeoWrapper = {
       properties: {
         name: "Кабель 3",
         type: "Кабель",
-        depth: 10
+        depth: 10,
+        status: "Ожидающий"
       },
       geometry: {
         type: "LineString",
