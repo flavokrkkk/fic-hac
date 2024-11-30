@@ -1,9 +1,10 @@
 import react from "@vitejs/plugin-react"
 import path from "path"
 import { defineConfig } from "vite"
+import cesium from "vite-plugin-cesium"
 
 export default defineConfig({
-  plugins: [react()],
+  plugins: [react(), cesium()],
   resolve: {
     alias: {
       "@app": path.resolve(__dirname, "./src/app"),
@@ -13,6 +14,13 @@ export default defineConfig({
       "@entities": path.resolve(__dirname, "./src/entities"),
       "@shared": path.resolve(__dirname, "./src/shared"),
       "@lib": path.resolve(__dirname, "./src/lib")
+    }
+  },
+  build: {
+    rollupOptions: {
+      output: {
+        chunkFileNames: "[name]-[hash].js"
+      }
     }
   }
 })

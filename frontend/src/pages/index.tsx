@@ -12,7 +12,6 @@ const LoginPage = lazy(() => import("@pages/authPage/ui/loginPage/ui"))
 
 export const router = createBrowserRouter([
   {
-    path: ERoutesNames.DEFAULT,
     element: <RootPage />,
     children: [
       ...routesWithHoc(privatePage, [
