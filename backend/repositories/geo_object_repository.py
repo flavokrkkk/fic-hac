@@ -32,3 +32,12 @@ class GeoObjectRepository(SqlAlchemyRepository):
             )
         ).scalar_one_or_none()
         return geo_object, property_object, geometry
+    
+    async def get_all_objects(self):
+        objects = []
+        all_objects = (await self.session.execute(select(self.model))).scalars().all()
+        for object in all_objects:
+            objects.append(
+                await self.get_object_by_name(object.properties.name)
+            )
+        return objects

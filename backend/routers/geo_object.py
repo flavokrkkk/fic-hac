@@ -16,3 +16,12 @@ async def get_geo_object(
     ],
 ):
     return await geo_object_service.get_object(object_name)
+
+
+@router.get("/")
+async def get_all_geo_objects(
+    geo_object_service: Annotated[
+        GeoObjectService, Depends(get_geo_object_service)
+    ],
+):
+    return await geo_object_service.get_all_objects()
