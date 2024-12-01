@@ -43,9 +43,9 @@ class GeoObjectRepository(SqlAlchemyRepository):
         if global_layers:
             query = query.where(self.model.global_layers.any(GlobalLayer.name.in_(global_layers)))
         if is_negative is True:
-            query = query.where(GeoObjectProperty.depth < 0)
+            query = query.where(GeoObjectProperty.depth < 0).join(GeoObjectProperty)
         elif is_negative is False:
-            query = query.where(GeoObjectProperty.depth > 0)
+            query = query.where(GeoObjectProperty.depth > 0).join(GeoObjectProperty)
 
         all_objects = (await self.session.execute(query)).scalars().all()
         objects = [await self.get_item(object.id) for object in all_objects]
