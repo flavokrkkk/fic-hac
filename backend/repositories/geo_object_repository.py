@@ -41,6 +41,7 @@ class GeoObjectRepository(SqlAlchemyRepository):
                     self.model
                 ).where(
                     self.model.global_layers.any(GlobalLayer.name.in_(global_layers))
+                    if global_layers else True
                 )
             )
         ).scalars().all()
