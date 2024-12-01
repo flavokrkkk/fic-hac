@@ -1,56 +1,79 @@
-import { RefObject, useState } from "react"
+import { RefObject, useCallback, useEffect, useState } from "react"
 import { IGeoObject } from "@entities/objects"
 import * as Cesium from "cesium"
+import { EActiveWatches } from "../utils"
 
 export const useGeoObject = (viewerRef: RefObject<Cesium.Viewer>) => {
   const [isModalVisible, setIsModalVisible] = useState(false)
   const [selectedObject, setSelectedObject] = useState<IGeoObject | null>(null)
+  const [watches, setWatches] = useState<EActiveWatches>(EActiveWatches.WATHES_ICON)
 
-  const processGeoJsonEntities = (dataSource: Cesium.DataSource, viewer: Cesium.Viewer): void => {
-    try {
-      const entities = dataSource.entities.values
+  const processGeoJsonEntities = useCallback(
+    (dataSource: Cesium.DataSource, viewer: Cesium.Viewer): void => {
+      try {
+        const entities = dataSource.entities.values
 
-      if (dataSource.clustering) {
-        dataSource.clustering.enabled = true
-        dataSource.clustering.pixelRange = 15
-        dataSource.clustering.minimumClusterSize = 2
-      }
-
-      entities.forEach(entity => {
-        const type: IGeoObject["type"] = entity.properties?.type?.getValue() || "unknown"
-        const status: string = entity.properties?.status?.getValue() || "unknown"
-        if (entity.polyline) {
-          entity.polyline.material = new Cesium.ColorMaterialProperty(Cesium.Color.TRANSPARENT)
-          entity.polyline.width = new Cesium.ConstantProperty(0)
+        if (dataSource.clustering) {
+          dataSource.clustering.enabled = true
+          dataSource.clustering.pixelRange = 15
+          dataSource.clustering.minimumClusterSize = 2
         }
-        const positions = entity.polyline?.positions?.getValue(Cesium.JulianDate.now())
-        const midpoint = positions?.[0] || entity.position?.getValue(Cesium.JulianDate.now())
 
-        if (midpoint) {
-          entity.billboard = new Cesium.BillboardGraphics({
-            image: "/locateIcon.svg",
-            scale: 0.6,
-            verticalOrigin: Cesium.VerticalOrigin.BOTTOM
-          })
+        entities.forEach(entity => {
+          const type: IGeoObject["type"] = entity.properties?.type?.getValue() || "unknown"
+          const status: string = entity.properties?.status?.getValue() || "unknown"
 
-          entity.label = new Cesium.LabelGraphics({
-            text: `Тип: ${type}\nСтатус: ${status}`,
-            font: "14pt sans-serif",
-            fillColor: Cesium.Color.WHITE,
-            outlineColor: Cesium.Color.BLACK,
-            outlineWidth: 2,
-            pixelOffset: new Cesium.Cartesian2(0, -50),
-            verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
-            scale: 0.8
-          })
+          if (entity.polyline) {
+            if (watches === EActiveWatches.WATCHES_LINE) {
+              entity.polyline.material = new Cesium.ColorMaterialProperty(Cesium.Color.AQUA)
+              entity.polyline.width = new Cesium.ConstantProperty(6)
+            } else {
+              entity.polyline.material = new Cesium.ColorMaterialProperty(Cesium.Color.TRANSPARENT)
+              entity.polyline.width = new Cesium.ConstantProperty(0)
+            }
+          }
 
-          entity.position = midpoint
-        }
-      })
+          const positions = entity.polyline?.positions?.getValue(Cesium.JulianDate.now())
+          const midpoint = positions?.[0] || entity.position?.getValue(Cesium.JulianDate.now())
 
-      viewer.screenSpaceEventHandler.setInputAction(
+          if (midpoint) {
+            if (watches === EActiveWatches.WATHES_ICON) {
+              entity.billboard = new Cesium.BillboardGraphics({
+                image: "/locateIcon.svg",
+                scale: 0.6,
+                verticalOrigin: Cesium.VerticalOrigin.BOTTOM
+              })
+            } else {
+              entity.billboard = undefined
+            }
+
+            entity.label = new Cesium.LabelGraphics({
+              text: `Тип: ${type}\nСтатус: ${status}`,
+              font: "14pt sans-serif",
+              fillColor: Cesium.Color.WHITE,
+              outlineColor: Cesium.Color.BLACK,
+              outlineWidth: 2,
+              pixelOffset: new Cesium.Cartesian2(0, -50),
+              verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
+              scale: 0.8
+            })
+
+            entity.position = midpoint
+          }
+        })
+
+        const handler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas)
+
+        handler.setInputAction((movement: Cesium.ScreenSpaceEventHandler.MotionEvent) => {
+          const pickedObject = viewer.scene.pick(movement.endPosition)
+          if (Cesium.defined(pickedObject) && Cesium.defined(pickedObject.id)) {
+            document.body.style.cursor = "pointer"
+          } else {
+            document.body.style.cursor = "default"
+          }
+        }, Cesium.ScreenSpaceEventType.MOUSE_MOVE)
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (movement: any) => {
+        viewer.screenSpaceEventHandler.setInputAction((movement: any) => {
           const pickedObject = viewer.scene.pick(movement.position)
 
           if (Cesium.defined(pickedObject) && Cesium.defined(pickedObject.id)) {
@@ -72,21 +95,32 @@ export const useGeoObject = (viewerRef: RefObject<Cesium.Viewer>) => {
 
             viewer.zoomTo(pickedEntity)
           }
-        },
-        Cesium.ScreenSpaceEventType.LEFT_CLICK
-      )
-    } catch (error) {
-      console.error("Ошибка обработки GeoJSON объектов:", error)
+        }, Cesium.ScreenSpaceEventType.LEFT_CLICK)
+      } catch (error) {
+        console.error("Ошибка обработки GeoJSON объектов:", error)
+      }
+    },
+    [watches]
+  )
+
+  useEffect(() => {
+    if (viewerRef.current) {
+      const dataSources = viewerRef.current.dataSources
+
+      if (dataSources) {
+        const length = dataSources.length
+        for (let i = 0; i < length; i++) {
+          const dataSource = dataSources.get(i)
+          if (dataSource) {
+            processGeoJsonEntities(dataSource, viewerRef.current!)
+          }
+        }
+      }
     }
-  }
+  }, [watches, processGeoJsonEntities])
 
-  const handleOk = () => {
-    setIsModalVisible(false)
-  }
-
-  const handleCancel = () => {
-    setIsModalVisible(false)
-  }
+  const handleOk = () => setIsModalVisible(false)
+  const handleCancel = () => setIsModalVisible(false)
 
   const handleLoad = (dataSource: Cesium.DataSource) => {
     if (viewerRef.current) {
@@ -94,11 +128,14 @@ export const useGeoObject = (viewerRef: RefObject<Cesium.Viewer>) => {
     }
   }
 
+  const handleChangeWatches = (value: EActiveWatches) => setWatches(value)
+
   return {
     handleLoad,
     isModalVisible,
     selectedObject,
     handleOk,
-    handleCancel
+    handleCancel,
+    handleChangeWatches
   }
 }

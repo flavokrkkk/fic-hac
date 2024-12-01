@@ -1,14 +1,18 @@
-import { RefObject, useEffect } from "react"
+import { RefObject, useEffect, useMemo } from "react"
 import * as Cesium from "cesium"
+import { ECoordinates } from "../utils"
 
 export const useMapRender = (viewerRef: RefObject<Cesium.Viewer>) => {
-  useEffect(() => {
-    const interval = setInterval(() => {
+  const handleRenderViewer = useMemo(
+    () => (interval: NodeJS.Timeout) => {
       const viewer = viewerRef.current
-
       if (viewer) {
         viewer.camera.setView({
-          destination: Cesium.Cartesian3.fromDegrees(37.605241, 55.729054, 1000),
+          destination: Cesium.Cartesian3.fromDegrees(
+            ECoordinates.LONGITUDE,
+            ECoordinates.LATITUDE,
+            ECoordinates.ALTITUDE
+          ),
           orientation: {
             heading: 0.0,
             pitch: -1.5,
@@ -17,8 +21,12 @@ export const useMapRender = (viewerRef: RefObject<Cesium.Viewer>) => {
         })
         clearInterval(interval)
       }
-    }, 100)
+    },
+    [viewerRef]
+  )
 
+  useEffect(() => {
+    const interval = setInterval(() => handleRenderViewer(interval), 100)
     return () => clearInterval(interval)
   }, [])
 }
