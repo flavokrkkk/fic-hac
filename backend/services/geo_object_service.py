@@ -17,6 +17,7 @@ class GeoObjectService(BaseService):
     ) -> GeoObjectModel:
         return GeoObjectModel(
             id=geo_object.id,
+            image=geo_object.image,
             type=geo_object.type.name,
             properties=PropertyModel(
                 name=property.name,

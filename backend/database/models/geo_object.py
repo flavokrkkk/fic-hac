@@ -102,6 +102,7 @@ class GeoObject(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     type_id: Mapped[int] = mapped_column(ForeignKey("geo_object_types.id"))
+    image: Mapped[str] = mapped_column(nullable=True)
     type: Mapped["GeoObjectType"] = relationship(
         back_populates="geo_objects", lazy="selectin"
     )

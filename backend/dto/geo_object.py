@@ -32,6 +32,7 @@ class GeoObjectModel(BaseModel):
     properties: PropertyModel
     geometry: GeometryModel
     global_layers: list[GlobalLayerModel]
+    image: str
 
 
 class UpdateGeoObjectModel(BaseModel):

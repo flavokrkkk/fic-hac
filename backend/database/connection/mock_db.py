@@ -22,6 +22,12 @@ async def create_test_db(session: AsyncSession):
         await session.close()
         return
     
+    photos = {
+        'Трубопровод': 'https://storage.yandexcloud.net/mago-storage/image_643919550.jpeg',
+        'Газопровод': 'https://storage.yandexcloud.net/mago-storage/foto-verkhnee-dzhemete.jpg',
+        'Теплосеть': 'https://storage.yandexcloud.net/mago-storage/KSP_018006_00008_1_t222_143538.jpg',
+        'Кабель': 'https://storage.yandexcloud.net/mago-storage/755404694639425.jpg'
+    }
     with open(os.path.join(os.getcwd(), 'backend', 'database', 'connection', 'test_db.json'), 'r') as file:
         test_json = file.read()
         test_jsons = jsn.loads(test_json)
@@ -100,7 +106,8 @@ async def create_test_db(session: AsyncSession):
         geo_object = GeoObject(
             type=geo_object_type,
             properties=properties,
-            geometry=geometry
+            geometry=geometry,
+            image=photos[json["properties"]["type"]]
         )
         global_layer.geo_objects.append(geo_object)
         session.add(geo_object)
