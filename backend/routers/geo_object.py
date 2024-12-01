@@ -5,7 +5,7 @@ from backend.dto.geo_object import UpdateGeoObjectModel
 from backend.services.geo_object_service import GeoObjectService
 from backend.services.layers_service import LayerService
 from backend.services.status_service import StatusService
-from backend.utils.dependencies.dependencies import get_geo_object_service, get_layers_service, get_status_service
+from backend.utils.dependencies.dependencies import get_current_user_dependency, get_geo_object_service, get_layers_service, get_status_service
 
 
 router = APIRouter(prefix="/api/geo-object", tags=["geo-object"])
@@ -16,10 +16,11 @@ async def get_all_geo_objects(
     geo_object_service: Annotated[
         GeoObjectService, Depends(get_geo_object_service)
     ],
+    user_id: Annotated[int, Depends(get_current_user_dependency)],
     global_layers: list[str] | None = Query(default=None),
     is_negative: bool | None = Query(default=None),
 ):
-    return await geo_object_service.get_all_objects(global_layers, is_negative)
+    return await geo_object_service.get_all_objects(user_id, global_layers, is_negative)
 
 
 @router.put("/{object_id}")

@@ -33,7 +33,7 @@ class GeoObjectModel(BaseModel):
     geometry: GeometryModel
     global_layers: list[GlobalLayerModel]
     image: str
-
+    is_saved: bool
 
 class UpdateGeoObjectModel(BaseModel):
     name: str | None = None

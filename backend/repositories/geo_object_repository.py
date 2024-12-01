@@ -107,13 +107,13 @@ class GeoObjectRepository(SqlAlchemyRepository):
         await self.session.refresh(object)
         return object
     
-    async def get_user_saved_objects(self, user_id: int):
+    async def get_user_saved_objects(self, user_id: int,):
         objects = (
             await self.session.execute(
                 select(
                     UserGeoObject.geo_object_id,
                 ).where(
-                    UserGeoObject.user_id == user_id
+                    UserGeoObject.user_id == user_id,
                 )
             )
         ).scalars().all()
