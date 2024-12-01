@@ -1,0 +1,439 @@
+[
+    {
+        "type": "Feature",
+        "properties": {
+            "name": "Трубопровод 1",
+            "type": "Трубопровод",
+            "depth": 10
+        },
+        "geometry": {
+            "type": "LineString",
+            "coordinates": [[37.6205, 55.7558], [37.6210, 55.7560]]
+        },
+        "global_layers": ["Водоснабжение"]
+    },
+    {
+        "type": "Feature",
+        "properties": {
+            "name": "Кабель 1", 
+            "type": "Кабель", 
+            "depth": 5
+        },
+        "geometry": {
+            "type": "LineString",
+            "coordinates": [[37.6208, 55.7555], [37.6212, 55.7559]]
+        },
+        "global_layers": ["Связь"]
+    },
+    {
+        "type": "Feature",
+        "properties": {
+            "name": "Трубопровод 2",
+            "type": "Трубопровод",
+            "depth": 15
+        },
+        "geometry": {
+            "type": "LineString",
+            "coordinates": [
+                [37.6195, 55.7550],
+                [37.6200, 55.7553],
+                [37.6207, 55.7557]
+            ]
+        },
+        "global_layers": ["Водоснабжение"]
+    },
+    {
+        "type": "Feature",
+        "properties": {"name": "Кабель 2", "type": "Кабель", "depth": 12},
+        "geometry": {
+            "type": "LineString",
+            "coordinates": [
+                [37.6213, 55.7556],
+                [37.6216, 55.7559],
+                [37.6219, 55.7562]
+            ]
+        },
+        "global_layers": ["Связь"]
+    },
+    {
+        "type": "Feature",
+        "properties": {
+            "name": "Газопровод 1",
+            "type": "Газопровод",
+            "depth": 8
+        },
+        "geometry": {
+            "type": "LineString",
+            "coordinates": [
+                [37.6203, 55.7554],
+                [37.6206, 55.7557],
+                [37.6209, 55.7560]
+            ]
+        },
+        "global_layers": ["Газоснабжение"]
+    },
+    {
+        "type": "Feature",
+        "properties": {
+            "name": "Трубопровод 3",
+            "type": "Трубопровод",
+            "depth": 20
+        },
+        "geometry": {
+            "type": "LineString",
+            "coordinates": [[37.6198, 55.7552], [37.6201, 55.7556]]
+        },
+        "global_layers": ["Водоснабжение"]
+    },
+    {
+        "type": "Feature",
+        "properties": {"name": "Кабель 3", "type": "Кабель", "depth": 10},
+        "geometry": {
+            "type": "LineString",
+            "coordinates": [
+                [37.6205, 55.7551],
+                [37.6208, 55.7554],
+                [37.6211, 55.7557]
+            ]
+        },
+        "global_layers": ["Электроэнергия"]
+    },
+    {
+        "type": "Feature",
+        "properties": {
+            "name": "Теплосеть 1",
+            "type": "Теплосеть",
+            "depth": 7
+        },
+        "geometry": {
+            "type": "LineString",
+            "coordinates": [
+                [37.6210, 55.7560],
+                [37.6214, 55.7564]
+            ]
+        },
+        "global_layers": ["Теплоснабжение"]
+    },
+    {
+        "type": "Feature",
+        "properties": {
+            "name": "Трубопровод 4",
+            "type": "Трубопровод",
+            "depth": 18
+        },
+        "geometry": {
+            "type": "LineString",
+            "coordinates": [
+                [37.6199, 55.7552],
+                [37.6202, 55.7555],
+                [37.6206, 55.7559]
+            ]
+        },
+        "global_layers": ["Водоснабжение"]
+    },
+    {
+        "type": "Feature",
+        "properties": {
+            "name": "Кабель 4",
+            "type": "Кабель",
+            "depth": 6
+        },
+        "geometry": {
+            "type": "LineString",
+            "coordinates": [
+                [37.6215, 55.7557],
+                [37.6219, 55.7561]
+            ]
+        },
+        "global_layers": ["Связь"]
+    },
+    {
+        "type": "Feature",
+        "properties": {
+            "name": "Теплосеть 2",
+            "type": "Теплосеть",
+            "depth": 9
+        },
+        "geometry": {
+            "type": "LineString",
+            "coordinates": [
+                [37.6207, 55.7554],
+                [37.6212, 55.7558]
+            ]
+        },
+        "global_layers": ["Теплоснабжение"]
+    },
+    {
+        "type": "Feature",
+        "properties": {
+            "name": "Газопровод 2",
+            "type": "Газопровод",
+            "depth": 14
+        },
+        "geometry": {
+            "type": "LineString",
+            "coordinates": [
+                [37.6203, 55.7550],
+                [37.6208, 55.7555],
+                [37.6212, 55.7559]
+            ]
+        },
+        "global_layers": ["Газоснабжение"]
+    },
+    {
+        "type": "Feature",
+        "properties": {
+            "name": "Трубопровод 5",
+            "type": "Трубопровод",
+            "depth": 12
+        },
+        "geometry": {
+            "type": "LineString",
+            "coordinates": [
+                [37.6198, 55.7553],
+                [37.6203, 55.7557]
+            ]
+        },
+        "global_layers": ["Водоснабжение"]
+    },
+    {
+        "type": "Feature",
+        "properties": {
+            "name": "Кабель 5",
+            "type": "Кабель",
+            "depth": 8
+        },
+        "geometry": {
+            "type": "LineString",
+            "coordinates": [
+                [37.6206, 55.7552],
+                [37.6211, 55.7556]
+            ]
+        },
+        "global_layers": ["Связь"]
+    },
+    {
+        "type": "Feature",
+        "properties": {
+            "name": "Трубопровод 6",
+            "type": "Трубопровод",
+            "depth": 11
+        },
+        "geometry": {
+            "type": "LineString",
+            "coordinates": [
+                [37.6212, 55.7555],
+                [37.6217, 55.7560]
+            ]
+        },
+        "global_layers": ["Водоснабжение"]
+    },
+    {
+        "type": "Feature",
+        "properties": {
+            "name": "Газопровод 3",
+            "type": "Газопровод",
+            "depth": 10
+        },
+        "geometry": {
+            "type": "LineString",
+            "coordinates": [
+                [37.6201, 55.7550],
+                [37.6206, 55.7554]
+            ]
+        },
+        "global_layers": ["Газоснабжение"]
+    },
+    {
+        "type": "Feature",
+        "properties": {
+            "name": "Кабель 6",
+            "type": "Кабель",
+            "depth": 7
+        },
+        "geometry": {
+            "type": "LineString",
+            "coordinates": [
+                [37.6210, 55.7556],
+                [37.6214, 55.7560]
+            ]
+        },
+        "global_layers": ["Связь"]
+    },
+    {
+        "type": "Feature",
+        "properties": {
+            "name": "Теплосеть 3",
+            "type": "Теплосеть",
+            "depth": 5
+        },
+        "geometry": {
+            "type": "LineString",
+            "coordinates": [
+                [37.6202, 55.7554],
+                [37.6206, 55.7557]
+            ]
+        },
+        "global_layers": ["Теплоснабжение"]
+    },
+    {
+        "type": "Feature",
+        "properties": {
+            "name": "Трубопровод 7",
+            "type": "Трубопровод",
+            "depth": 16
+        },
+        "geometry": {
+            "type": "LineString",
+            "coordinates": [
+                [37.6196, 55.7552],
+                [37.6200, 55.7556]
+            ]
+        },
+        "global_layers": ["Водоснабжение"]
+    },
+    {
+        "type": "Feature",
+        "properties": {
+            "name": "Газопровод 4",
+            "type": "Газопровод",
+            "depth": 9
+        },
+        "geometry": {
+            "type": "LineString",
+            "coordinates": [
+                [37.6211, 55.7553],
+                [37.6215, 55.7557]
+            ]
+        },
+        "global_layers": ["Газоснабжение"]
+    },
+    {
+        "type": "Feature",
+        "properties": {
+            "name": "Теплосеть 4",
+            "type": "Теплосеть",
+            "depth": 14
+        },
+        "geometry": {
+            "type": "LineString",
+            "coordinates": [
+                [37.6207, 55.7555],
+                [37.6212, 55.7559]
+            ]
+        },
+        "global_layers": ["Теплоснабжение"]
+    },
+    {
+        "type": "Feature",
+        "properties": {
+            "name": "Кабель 8",
+            "type": "Кабель",
+            "depth": 3
+        },
+        "geometry": {
+            "type": "LineString",
+            "coordinates": [
+                [37.6203, 55.7556],
+                [37.6208, 55.7560]
+            ]
+        },
+        "global_layers": ["Связь"]
+    },
+    {
+        "type": "Feature",
+        "properties": {
+            "name": "Трубопровод 8",
+            "type": "Трубопровод",
+            "depth": 13
+        },
+        "geometry": {
+            "type": "LineString",
+            "coordinates": [
+                [37.6198, 55.7550],
+                [37.6202, 55.7554]
+            ]
+        },
+        "global_layers": ["Водоснабжение"]
+    },
+    {
+        "type": "Feature",
+        "properties": {
+            "name": "Газопровод 5",
+            "type": "Газопровод",
+            "depth": 12
+        },
+        "geometry": {
+            "type": "LineString",
+            "coordinates": [
+                [37.6206, 55.7552],
+                [37.6210, 55.7556]
+            ]
+        },
+        "global_layers": ["Газоснабжение"]
+    },
+    {
+        "type": "Feature",
+        "properties": {
+            "name": "Кабель 9",
+            "type": "Кабель",
+            "depth": 6
+        },
+        "geometry": {
+            "type": "LineString",
+            "coordinates": [
+                [37.6209, 55.7554],
+                [37.6213, 55.7558]
+            ]
+        },
+        "global_layers": ["Связь"]
+    },
+    {
+        "type": "Feature",
+        "properties": {
+            "name": "Теплосеть 5",
+            "type": "Теплосеть",
+            "depth": 8
+        },
+        "geometry": {
+            "type": "LineString",
+            "coordinates": [
+                [37.6201, 55.7553],
+                [37.6205, 55.7557]
+            ]
+        },
+        "global_layers": ["Теплоснабжение"]
+    },
+    {
+        "type": "Feature",
+        "properties": {
+            "name": "Трубопровод 9",
+            "type": "Трубопровод",
+            "depth": 17
+        },
+        "geometry": {
+            "type": "LineString",
+            "coordinates": [
+                [37.6197, 55.7551],
+                [37.6202, 55.7555]
+            ]
+        },
+        "global_layers": ["Водоснабжение"]
+    },
+    {
+        "type": "Feature",
+        "properties": {
+            "name": "Газопровод 6",
+            "type": "Газопровод",
+            "depth": 11
+        },
+        "geometry": {
+            "type": "LineString",
+            "coordinates": [
+                [37.6204, 55.7552],
+                [37.6209, 55.7556]
+            ]
+        },
+        "global_layers": ["Газоснабжение"]
+    }
+]

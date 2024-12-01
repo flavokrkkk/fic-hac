@@ -1,3 +1,5 @@
+import json as jsn
+import os
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -9,6 +11,7 @@ from backend.database.models.geo_object import (
     GeoObjectStatus,
     GeoObjectType,
     GeometryType,
+    GlobalLayer,
     PropertyType,
 )
 
@@ -19,96 +22,9 @@ async def create_test_db(session: AsyncSession):
         await session.close()
         return
     
-    test_jsons = [
-        {
-            "type": "Feature",
-            "properties": {
-                "name": "Трубопровод 1",
-                "type": "Трубопровод",
-                "depth": 10,
-            },
-            "geometry": {
-                "type": "LineString",
-                "coordinates": [[37.605241, 55.729054], [37.6059, 55.7299]],
-            },
-        },
-        {
-            "type": "Feature",
-            "properties": {"name": "Кабель 1", "type": "Кабель", "depth": 5},
-            "geometry": {
-                "type": "LineString",
-                "coordinates": [[37.6075, 55.7300], [37.6080, 55.7315]],
-            },
-        },
-        {
-            "type": "Feature",
-            "properties": {
-                "name": "Трубопровод 2",
-                "type": "Трубопровод",
-                "depth": 15,
-            },
-            "geometry": {
-                "type": "LineString",
-                "coordinates": [
-                    [37.6040, 55.7320],
-                    [37.6060, 55.7330],
-                    [37.6075, 55.7340],
-                ],
-            },
-        },
-        {
-            "type": "Feature",
-            "properties": {"name": "Кабель 2", "type": "Кабель", "depth": 12},
-            "geometry": {
-                "type": "LineString",
-                "coordinates": [
-                    [37.6090, 55.7350],
-                    [37.6100, 55.7360],
-                    [37.6110, 55.7370],
-                ],
-            },
-        },
-        {
-            "type": "Feature",
-            "properties": {
-                "name": "Газопровод 1",
-                "type": "Газопровод",
-                "depth": 8,
-            },
-            "geometry": {
-                "type": "LineString",
-                "coordinates": [
-                    [37.6120, 55.7380],
-                    [37.6130, 55.7390],
-                    [37.6140, 55.7400],
-                ],
-            },
-        },
-        {
-            "type": "Feature",
-            "properties": {
-                "name": "Трубопровод 3",
-                "type": "Трубопровод",
-                "depth": 20,
-            },
-            "geometry": {
-                "type": "LineString",
-                "coordinates": [[37.6150, 55.7410], [37.6160, 55.7420]],
-            },
-        },
-        {
-            "type": "Feature",
-            "properties": {"name": "Кабель 3", "type": "Кабель", "depth": 10},
-            "geometry": {
-                "type": "LineString",
-                "coordinates": [
-                    [37.6170, 55.7430],
-                    [37.6180, 55.7440],
-                    [37.6190, 55.7450],
-                ],
-            },
-        },
-    ]
+    with open(os.path.join(os.getcwd(), 'backend', 'database', 'connection', 'test_db.json'), 'r') as file:
+        test_json = file.read()
+        test_jsons = jsn.loads(test_json)
 
     for json in test_jsons:
         geo_object_type = (
@@ -120,8 +36,8 @@ async def create_test_db(session: AsyncSession):
         ).scalar_one_or_none()
         property_type = (
             await session.execute(
-                select(GeoObjectType).where(
-                    GeoObjectType.name == json["properties"]["type"]
+                select(PropertyType).where(
+                    PropertyType.name == json["properties"]["type"]
                 )
             )
         ).scalar_one_or_none()
@@ -132,7 +48,17 @@ async def create_test_db(session: AsyncSession):
                 )
             )
         ).scalar_one_or_none()
+        global_layer = (
+            await session.execute(
+                select(GlobalLayer).where(
+                    GlobalLayer.name == json["global_layers"][0]
+                )
+            )
+        ).scalar_one_or_none()
 
+        if not global_layer:
+            global_layer = GlobalLayer(name=json["global_layers"][0])
+            session.add(global_layer)
         if not geo_object_type:
             geo_object_type = GeoObjectType(name=json["properties"]["type"])
             session.add(geo_object_type)
@@ -142,7 +68,6 @@ async def create_test_db(session: AsyncSession):
         if not geometry_type:
             geometry_type = GeometryType(name=json["geometry"]["type"])
             session.add(geometry_type)
-            
         status = GeoObjectStatus(name='Активный')
         geometry = GeoObjectGeometry(
             type=geometry_type,
@@ -154,14 +79,15 @@ async def create_test_db(session: AsyncSession):
         properties = GeoObjectProperty(
             property_type=property_type,
             depth=json["properties"]["depth"],
-            name=json["properties"]["name"],
-            
+            name=json["properties"]["name"],   
+            status=status,
         )
-        status.properties.append(properties)
+        property_type.properties.append(properties)
         geo_object = GeoObject(
             type=geo_object_type,
             properties=properties,
-            geometry=geometry,
+            geometry=geometry
         )
+        global_layer.geo_objects.append(geo_object)
         session.add(geo_object)
         await session.commit()

@@ -1,6 +1,6 @@
 from sqlalchemy import select
 from sqlalchemy.orm import joinedload
-from backend.database.models.geo_object import GeoObject, GeoObjectGeometry, GeoObjectProperty
+from backend.database.models.geo_object import GeoObject, GeoObjectGeometry, GeoObjectProperty, GlobalLayer
 from backend.repositories.base import SqlAlchemyRepository
 
 
@@ -33,9 +33,17 @@ class GeoObjectRepository(SqlAlchemyRepository):
         ).scalar_one_or_none()
         return geo_object, property_object, geometry
     
-    async def get_all_objects(self):
+    async def get_all_objects(self, global_layers: list[str]):
         objects = []
-        all_objects = (await self.session.execute(select(self.model))).scalars().all()
+        all_objects = (
+            await self.session.execute(
+                select(
+                    self.model
+                ).where(
+                    self.model.global_layers.any(GlobalLayer.name.in_(global_layers))
+                )
+            )
+        ).scalars().all()
         for object in all_objects:
             objects.append(
                 await self.get_object_by_name(object.properties.name)

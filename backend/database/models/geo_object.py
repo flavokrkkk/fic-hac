@@ -6,10 +6,10 @@ from backend.database.models.base import Base
 class GeoObjectType(Base):
     __tablename__ = "geo_object_types"
     name: Mapped[str]
-    geo_object_id: Mapped[int] = mapped_column(ForeignKey("geo_objects.id"))
     geo_objects: Mapped[list["GeoObject"]] = relationship(
-        back_populates="type", uselist=True, lazy="selectin"
+        back_populates="type", lazy="selectin"
     )
+
 
 
 class GeometryType(Base):
@@ -25,8 +25,7 @@ class GeometryType(Base):
 class PropertyType(Base):
     __tablename__ = "property_types"
     name: Mapped[str]
-    property_id: Mapped[int] = mapped_column(ForeignKey("geo_object_properties.id"))
-    properties: Mapped["GeoObjectProperty"] = relationship(
+    properties: Mapped[list["GeoObjectProperty"]] = relationship(
         back_populates="property_type", lazy="selectin"
     )
 
@@ -58,6 +57,7 @@ class GeoObjectProperty(Base):
     description: Mapped[str] = mapped_column(nullable=True)
     geo_object_id: Mapped[int] = mapped_column(ForeignKey("geo_objects.id"))
     status_id: Mapped[int] = mapped_column(ForeignKey("geo_object_statuses.id"))
+    property_type_id: Mapped[int] = mapped_column(ForeignKey("property_types.id"))
     status: Mapped["GeoObjectStatus"] = relationship(
         back_populates="properties", lazy="selectin"
     )
@@ -81,16 +81,47 @@ class GeoObjectGeometry(Base):
         back_populates="geometry", uselist=False, lazy="selectin"
     )
 
+
+class GlobalLayer(Base):
+    __tablename__ = "global_layers"
+    
+    name: Mapped[str]
+    geo_objects: Mapped[list["GeoObject"]] = relationship(
+        back_populates="global_layers", 
+        uselist=True, 
+        lazy="selectin", 
+        secondary='global_layers_geo_objects'
+    )
+
     
 class GeoObject(Base):
     __tablename__ = "geo_objects"
 
-    type: Mapped[GeoObjectType] = relationship(
+    id: Mapped[int] = mapped_column(primary_key=True)
+    type_id: Mapped[int] = mapped_column(ForeignKey("geo_object_types.id"))
+    type: Mapped["GeoObjectType"] = relationship(
         back_populates="geo_objects", lazy="selectin"
     )
-    properties: Mapped[GeoObjectProperty] = relationship(
-        back_populates="geo_object", uselist=False, lazy="selectin"
+    properties: Mapped["GeoObjectProperty"] = relationship(
+        back_populates="geo_object", 
+        uselist=False, 
+        lazy="selectin"
     )
-    geometry: Mapped[GeoObjectGeometry] = relationship(
-        back_populates="geo_object", uselist=False, lazy="selectin"
+    geometry: Mapped["GeoObjectGeometry"] = relationship(
+        back_populates="geo_object", 
+        uselist=False, 
+        lazy="selectin"
     )
+    global_layers: Mapped[list["GlobalLayer"]] = relationship(
+        back_populates="geo_objects", 
+        lazy="selectin", 
+        uselist=True,
+        secondary='global_layers_geo_objects'
+    )
+
+
+class GlobalLayerGeoObject(Base):
+    __tablename__ = "global_layers_geo_objects"
+
+    global_layer_id: Mapped[int] = mapped_column(ForeignKey("global_layers.id"))
+    geo_object_id: Mapped[int] = mapped_column(ForeignKey("geo_objects.id"))

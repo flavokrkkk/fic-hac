@@ -8,6 +8,11 @@ class PropertyModel(BaseModel):
     status: str
 
 
+class GlobalLayerModel(BaseModel):
+    id: int
+    name: str
+
+
 class GeometryModel(BaseModel):
     type: str
     coordinates: list[list[float]]
@@ -18,3 +23,4 @@ class GeoObjectModel(BaseModel):
     type: str
     properties: PropertyModel
     geometry: GeometryModel
+    global_layers: list[GlobalLayerModel]
