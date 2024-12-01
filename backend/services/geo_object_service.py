@@ -1,3 +1,4 @@
+from sqlalchemy import desc
 from backend.database.models.geo_object import GeoObject, GeoObjectGeometry, GeoObjectProperty
 from backend.dto.geo_object import GeoObjectModel, GeometryModel, GlobalLayerModel, PropertyModel, StatusModel, UpdateGeoObjectModel
 from backend.errors.geo_object_errors import GeoObjectNotFound
@@ -23,6 +24,7 @@ class GeoObjectService(BaseService):
                 depth=property.depth,
                 status=property.status.name,
                 material=property.material,
+                description=property.description
             ),
             geometry=GeometryModel(
                 type=geometry.type.name,

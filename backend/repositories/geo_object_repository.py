@@ -1,4 +1,5 @@
 from ast import Await
+from botocore import session
 from sqlalchemy import select, update
 from sqlalchemy.orm import joinedload
 from backend.database.models.geo_object import GeoObject, GeoObjectGeometry, GeoObjectProperty, GlobalLayer, GlobalLayerGeoObject
@@ -71,6 +72,7 @@ class GeoObjectRepository(SqlAlchemyRepository):
             ) for global_layer_id in global_layers
         ]
         self.session.add_all(object_layers)
+        await self.session.commit()
 
     async def update_property(self, object: GeoObject, update_data: dict):
         if not update_data:
@@ -85,23 +87,22 @@ class GeoObjectRepository(SqlAlchemyRepository):
                 **update_data
             )
         )
+        await self.session.commit()
 
     async def update_item(self, object: GeoObject, form: UpdateGeoObjectModel) -> GeoObject:
         if form.status:
             await self.update_status(object.id, form.status)
         if form.name:
-            object.name = form.name
+            object.properties.name = form.name
         if form.global_layers:
             await self.update_layers(object, form.global_layers)
         update_property_data = {}
         if form.description:
             update_property_data["description"] = form.description
         if form.material:
-            update_property_data["material"] = form.material    
-        
+            update_property_data["material"] = form.material
         
         await self.update_property(object, update_property_data)
-
         await self.session.commit()
         await self.session.refresh(object)
         return object

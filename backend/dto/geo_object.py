@@ -13,6 +13,7 @@ class PropertyModel(BaseModel):
     depth: float
     status: str
     material: str
+    description: str
 
 
 class GlobalLayerModel(BaseModel):
