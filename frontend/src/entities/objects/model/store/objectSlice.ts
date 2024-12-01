@@ -1,13 +1,21 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit"
-import { communications } from "@shared/mocks/communications"
+import { asyncThunkCreator, buildCreateSlice, PayloadAction } from "@reduxjs/toolkit"
 import { IObjectsState } from "./types"
+import { IGeoObject } from "../types"
+import { objectQuery } from "@shared/api/queryObject"
+
+const createSliceWithThunks = buildCreateSlice({
+  creators: { asyncThunk: asyncThunkCreator }
+})
 
 const initialState: IObjectsState = {
-  geoObjects: communications,
-  filterGeoObjects: communications
+  isLoading: false,
+  geoObjects: { type: "", features: [] },
+  geoObjectType: [],
+  filterGeoObjects: { type: "", features: [] },
+  error: ""
 }
 
-export const objectSlice = createSlice({
+export const objectSlice = createSliceWithThunks({
   name: "geoObjectsSlice",
   initialState,
   reducers: create => ({
@@ -50,6 +58,44 @@ export const objectSlice = createSlice({
           features: state.geoObjects.features.filter(f =>
             f.properties.type.toLowerCase().includes(payload.value.toLowerCase())
           )
+        }
+      }
+    ),
+    getAllObjects: create.asyncThunk<Array<IGeoObject>, string, { rejectValue: string }>(
+      async (params: string, { rejectWithValue }) => {
+        try {
+          const { data, status } = await objectQuery.get("/api/geo-object/", params)
+          if (status !== 200) return rejectWithValue("Invalid status: " + status)
+          return data
+        } catch (e) {
+          return rejectWithValue(`${e}`)
+        }
+      },
+      {
+        pending: state => {
+          state.isLoading = true
+        },
+        fulfilled: (state, { payload }) => {
+          const parseToGeoObject = {
+            type: "FeatureCollection",
+            features: payload
+          }
+          state.geoObjectType = [
+            ...new Set(parseToGeoObject.features.map(object => object.properties.type))
+          ]
+          state.filterGeoObjects = {
+            ...parseToGeoObject,
+            features: parseToGeoObject.features.map(features => ({ ...features, type: "Feature" }))
+          }
+          state.geoObjects = {
+            ...parseToGeoObject,
+            features: parseToGeoObject.features.map(features => ({ ...features, type: "Feature" }))
+          }
+          state.isLoading = false
+        },
+        rejected: state => {
+          state.isLoading = false
+          state.error = "Failed to request!"
         }
       }
     )

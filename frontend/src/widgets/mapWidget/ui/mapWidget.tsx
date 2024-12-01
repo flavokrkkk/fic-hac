@@ -16,12 +16,14 @@ import { EActiveWatches } from "@shared/utils"
 
 interface IMapWidget {
   geoObjects: IGeoWrapper
+  selectedLayer: string
+  handleChange: (value: string) => void
 }
-const MapWidget: FC<IMapWidget> = memo(({ geoObjects }) => {
+const MapWidget: FC<IMapWidget> = memo(({ geoObjects, handleChange, selectedLayer }) => {
   const viewerRef = useRef<CesiumViewer | null>(null)
   const [values, setValues] = useState("")
   const [dropdownVisible, setDropdownVisible] = useState(false)
-  const [selectedLayer, setSelectedLayer] = useState<string>("Выбрать слой")
+
   const [filters, setFilters] = useState<{ pipeline: string; cable: string; gasPipeline: string }>({
     pipeline: "",
     cable: "",
@@ -100,8 +102,6 @@ const MapWidget: FC<IMapWidget> = memo(({ geoObjects }) => {
   }, [])
 
   const handleMapClick = () => setDropdownVisible(false)
-
-  const handleChange = (value: string) => setSelectedLayer(value)
 
   useMapRender(viewerRef)
   useEffect(() => {

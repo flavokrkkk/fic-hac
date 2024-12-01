@@ -3,8 +3,8 @@ export const enum EBaseUrls {
 }
 
 export enum ECoordinates {
-  LONGITUDE = 37.605241,
-  LATITUDE = 55.729054,
+  LONGITUDE = 37.6203,
+  LATITUDE = 55.7554,
   ALTITUDE = 1000
 }
 

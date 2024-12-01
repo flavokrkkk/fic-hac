@@ -7,5 +7,6 @@ export const enum EFilterTypes {
 export const enum EFilterStatusTypes {
   ACTIVE = "Активный",
   WAITING = "Ожидающий",
-  INACTIVE = "Неактивный"
+  INACTIVE = "Неактивный",
+  WORK = "В работе"
 }
