@@ -16,7 +16,6 @@ const ProfilePage = () => {
   useEffect(() => {
     getSavedObjects()
   }, [])
-
   return (
     <div className="flex space-x-6 p-4">
       <div className="w-1/4">

@@ -90,9 +90,11 @@ export const objectSlice = createSliceWithThunks({
         fulfilled: (state, { payload }) => {
           const parseToGeoObject = {
             type: "FeatureCollection",
-            features: payload
+            features: payload.map(feature => ({
+              ...feature,
+              properties: { ...feature.properties, image: feature.image }
+            }))
           }
-
           state.geoObjectType = parseToGeoObject.features.reduce((acc, item) => {
             if (!acc[item.properties.type]) {
               acc[item.properties.type] = ""

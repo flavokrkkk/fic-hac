@@ -92,7 +92,6 @@ export const useGeoObject = (viewerRef: RefObject<Cesium.Viewer>) => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         viewer.screenSpaceEventHandler.setInputAction((movement: any) => {
           const pickedObject = viewer.scene.pick(movement.position)
-
           if (Cesium.defined(pickedObject) && Cesium.defined(pickedObject.id)) {
             const pickedEntity = pickedObject.id
             const geoObjectInfo: IGeoObject = {
@@ -101,10 +100,15 @@ export const useGeoObject = (viewerRef: RefObject<Cesium.Viewer>) => {
                 name: pickedEntity.properties?.name?.getValue() || "Unknown",
                 type: pickedEntity.properties?.type?.getValue() || "Unknown",
                 status: pickedEntity.properties?.status?.getValue() || "Unknown",
-                depth: pickedEntity.properties?.depth?.getValue() || 0
+                depth: pickedEntity.properties?.depth?.getValue() || 0,
+                description: pickedEntity.properties?.description?.getValue() || "",
+                material: pickedEntity.properties?.material?.getValue() || ""
               },
+              global_layers: pickedEntity.properties?.global_layers?.getValue() || [],
+              image: pickedEntity.properties.image.getValue() || "/defaultImage.jpg",
               geometry: pickedEntity.geometry,
-              type: ""
+              type: pickedEntity.properties?.type?.getValue() || "Unknown",
+              is_saved: false
             }
 
             setSelectedObject(geoObjectInfo)

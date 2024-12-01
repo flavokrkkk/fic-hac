@@ -13,34 +13,55 @@ interface IDetailObjectInfo {
 }
 
 const DetailObjectInfo: FC<IDetailObjectInfo> = ({ selectedObject }) => {
-  console.log(selectedObject)
   return (
     <div>
       {selectedObject ? (
         <div>
-          <Card hoverable bordered={false} style={{ marginBottom: 20 }}>
-            <Title level={4}>{selectedObject.properties.name}</Title>
-            <Descriptions bordered column={1}>
-              <Descriptions.Item label="Тип" span={3}>
-                <Text>{selectedObject.properties.type}</Text>
-              </Descriptions.Item>
+          <Card
+            hoverable
+            bordered={false}
+            style={{
+              marginBottom: 20,
+              backgroundImage: `url(${selectedObject.image})`,
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+              backgroundRepeat: "no-repeat",
+              color: "white",
+              padding: 20
+            }}
+          >
+            <div style={{ backgroundColor: "rgba(0, 0, 0, 0.5)", padding: 20, borderRadius: 8 }}>
+              <Title level={4} style={{ color: "white" }}>
+                {selectedObject.properties.name}
+              </Title>
+              <Descriptions
+                bordered
+                column={1}
+                style={{ backgroundColor: "rgba(255, 255, 255, 0.8)" }}
+              >
+                <Descriptions.Item label="Тип" span={3}>
+                  <Text>{selectedObject.properties.type}</Text>
+                </Descriptions.Item>
 
-              <Descriptions.Item label="Статус" span={3}>
-                <Text type={selectedObject.properties.status === "Активный" ? "success" : "danger"}>
-                  {selectedObject.properties.status}
-                </Text>
-              </Descriptions.Item>
+                <Descriptions.Item label="Статус" span={3}>
+                  <Text
+                    type={selectedObject.properties.status === "Активный" ? "success" : "danger"}
+                  >
+                    {selectedObject.properties.status}
+                  </Text>
+                </Descriptions.Item>
 
-              <Descriptions.Item label="Глубина (м)" span={3}>
-                <Statistic value={selectedObject.properties.depth} suffix="м" />
-              </Descriptions.Item>
-            </Descriptions>
+                <Descriptions.Item label="Глубина (м)" span={3}>
+                  <Statistic value={selectedObject.properties.depth} suffix="м" />
+                </Descriptions.Item>
+              </Descriptions>
+            </div>
           </Card>
-          <img
+          {/* <img
             src={selectedObject.image}
             alt="Object Cover"
             style={{ width: "100%", height: "auto" }}
-          />
+          /> */}
           <Space direction="vertical" size="middle" style={{ width: "100%" }}>
             {selectedObject.properties.status === "Активный" ? (
               <Space size="middle" style={{ color: "green" }}>
