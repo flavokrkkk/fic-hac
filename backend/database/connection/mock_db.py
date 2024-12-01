@@ -27,6 +27,8 @@ async def create_test_db(session: AsyncSession):
         test_jsons = jsn.loads(test_json)
 
     for json in test_jsons:
+        print(json["properties"]["type"] == "Газопровод")
+        json["properties"]["depth"] = ~json["properties"]["depth"] if json["properties"]["type"] == "Газопровод" else 0
         geo_object_type = (
             await session.execute(
                 select(GeoObjectType).where(
