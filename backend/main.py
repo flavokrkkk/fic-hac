@@ -39,9 +39,9 @@ app.add_middleware(
 
 app.include_router(routers.auth_router)
 app.include_router(routers.user_router, dependencies=[PROTECTED])
-app.include_router(routers.geo_object_router)
-app.include_router(routers.status_router)
-app.include_router(routers.layer_router)
+app.include_router(routers.geo_object_router, dependencies=[PROTECTED])
+app.include_router(routers.status_router, dependencies=[PROTECTED])
+app.include_router(routers.layer_router, dependencies=[PROTECTED])
 
 
 @app.exception_handler(RequestValidationError)
