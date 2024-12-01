@@ -49,3 +49,6 @@ class GeoObjectRepository(SqlAlchemyRepository):
                 await self.get_object_by_name(object.properties.name)
             )
         return objects
+    
+    async def get_object_by_id(self, object_id: int):
+        return await self.session.get(self.model, object_id)
