@@ -34,6 +34,7 @@ class Coordinate(Base):
     __tablename__ = "coordinates"
     x: Mapped[float]
     y: Mapped[float]
+    depth: Mapped[float]
     geometry_id: Mapped[int] = mapped_column(ForeignKey("geo_object_geometries.id"))
     geometry: Mapped["GeoObjectGeometry"] = relationship(
         back_populates="coordinates", uselist=False, lazy="selectin"
@@ -55,6 +56,7 @@ class GeoObjectProperty(Base):
     name: Mapped[str]
     depth: Mapped[float]
     description: Mapped[str] = mapped_column(nullable=True)
+    material: Mapped[str]
     geo_object_id: Mapped[int] = mapped_column(ForeignKey("geo_objects.id"))
     status_id: Mapped[int] = mapped_column(ForeignKey("geo_object_statuses.id"))
     property_type_id: Mapped[int] = mapped_column(ForeignKey("property_types.id"))

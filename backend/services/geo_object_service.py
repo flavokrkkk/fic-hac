@@ -1,5 +1,5 @@
 from backend.database.models.geo_object import GeoObject, GeoObjectGeometry, GeoObjectProperty
-from backend.dto.geo_object import GeoObjectModel, GeometryModel, GlobalLayerModel, PropertyModel
+from backend.dto.geo_object import GeoObjectModel, GeometryModel, GlobalLayerModel, PropertyModel, StatusModel, UpdateGeoObjectModel
 from backend.errors.geo_object_errors import GeoObjectNotFound
 from backend.repositories.geo_object_repository import GeoObjectRepository
 from backend.services.base_service import BaseService
@@ -22,11 +22,12 @@ class GeoObjectService(BaseService):
                 type=property.property_type.name,
                 depth=property.depth,
                 status=property.status.name,
+                material=property.material,
             ),
             geometry=GeometryModel(
                 type=geometry.type.name,
                 coordinates=[
-                    [coordinate.x, coordinate.y]
+                    [coordinate.x, coordinate.y, coordinate.depth]
                     for coordinate in geometry.coordinates
                 ],
             ),
@@ -36,8 +37,8 @@ class GeoObjectService(BaseService):
             ],
         )
 
-    async def get_object(self, object_name: str) -> GeoObjectModel:
-        geo_object, property, geometry = await self.repository.get_object_by_name(object_name)
+    async def get_object(self, object_id: int) -> GeoObjectModel:
+        geo_object, property, geometry = await self.repository.get_item(object_id)
         await self.check_item(geo_object, GeoObjectNotFound)
         return await self._model_validate_object(geo_object, property, geometry)
 
@@ -51,3 +52,16 @@ class GeoObjectService(BaseService):
                 )
             )
         return dump_objects
+
+    async def update_object(self, object_id: int, form: UpdateGeoObjectModel) -> GeoObjectModel:
+        object = await self.repository.get_item(object_id)
+        await self.check_item(object, GeoObjectNotFound)
+        await self.repository.update_item(object[0], form)
+        return await self.get_object(object_id)
+    
+    async def delete_object(self, object_id: int) -> None:
+        object = await self.repository.get_item(object_id)
+        await self.check_item(object, GeoObjectNotFound)
+        await self.repository.delete_item(object_id)
+
+    # async def add_object(self, form: GeoObjectModel) -> GeoObjectModel:

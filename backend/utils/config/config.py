@@ -12,7 +12,7 @@ class DatabaseConfig(BaseModel):
     db_pass: str
     db_host: str
     db_port: str
-
+    reset: bool
 
 class JwtConfig(BaseModel):
     jwt_secret: str
@@ -40,6 +40,7 @@ def load_database_config() -> DatabaseConfig:
         db_pass=env.str("DB_PASS"),
         db_host=env.str("DB_HOST"),
         db_port=env.str("DB_PORT"),
+        reset=env.bool("RESET"),
     )
 
 
