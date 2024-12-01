@@ -27,7 +27,7 @@ app = FastAPI(lifespan=lifespan)
 PROTECTED = Depends(get_current_user_dependency)
 
 
-origins = ["http://localhost:5173"]
+origins = ["http://localhost:5173", "https://fic-hac-63s5.vercel.app/"]
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
@@ -38,9 +38,10 @@ app.add_middleware(
 
 
 app.include_router(routers.auth_router)
-app.include_router(routers.location_router, dependencies=[PROTECTED])
 app.include_router(routers.user_router, dependencies=[PROTECTED])
 app.include_router(routers.geo_object_router, dependencies=[PROTECTED])
+app.include_router(routers.status_router, dependencies=[PROTECTED])
+app.include_router(routers.layer_router, dependencies=[PROTECTED])
 
 
 @app.exception_handler(RequestValidationError)

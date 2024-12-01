@@ -1,6 +1,7 @@
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from backend.database.models.base import Base
+from backend.database.models.user import UserGeoObject
 
 
 class GeoObjectType(Base):
@@ -34,6 +35,7 @@ class Coordinate(Base):
     __tablename__ = "coordinates"
     x: Mapped[float]
     y: Mapped[float]
+    depth: Mapped[float]
     geometry_id: Mapped[int] = mapped_column(ForeignKey("geo_object_geometries.id"))
     geometry: Mapped["GeoObjectGeometry"] = relationship(
         back_populates="coordinates", uselist=False, lazy="selectin"
@@ -55,6 +57,7 @@ class GeoObjectProperty(Base):
     name: Mapped[str]
     depth: Mapped[float]
     description: Mapped[str] = mapped_column(nullable=True)
+    material: Mapped[str]
     geo_object_id: Mapped[int] = mapped_column(ForeignKey("geo_objects.id"))
     status_id: Mapped[int] = mapped_column(ForeignKey("geo_object_statuses.id"))
     property_type_id: Mapped[int] = mapped_column(ForeignKey("property_types.id"))
@@ -99,6 +102,7 @@ class GeoObject(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     type_id: Mapped[int] = mapped_column(ForeignKey("geo_object_types.id"))
+    image: Mapped[str] = mapped_column(nullable=True)
     type: Mapped["GeoObjectType"] = relationship(
         back_populates="geo_objects", lazy="selectin"
     )
@@ -117,6 +121,13 @@ class GeoObject(Base):
         lazy="selectin", 
         uselist=True,
         secondary='global_layers_geo_objects'
+    )
+    users_who_saved = relationship(
+        "User",
+        back_populates="saved_objects", 
+        lazy="selectin", 
+        uselist=True,
+        secondary='users_geo_objects'
     )
 
 

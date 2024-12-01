@@ -1,5 +1,9 @@
 from enum import Enum
 
 
-class GlobalLayersTypes(str, Enum):
+class StatusTypes(str, Enum):
+    ACTIVE = "Активный",
+    WAITING = "Ожидающий",
+    INACTIVE = "Неактивный"
+
     

@@ -80,3 +80,15 @@ async def get_geo_object_service(session=Depends(get_session)):
     return services.GeoObjectService(
         repository=repositories.GeoObjectRepository(session=session)
     )
+
+
+async def get_status_service(session=Depends(get_session)):
+    return services.StatusService(
+        repository=repositories.StatusRepository(session=session)
+    )
+
+
+async def get_layers_service(session=Depends(get_session)):
+    return services.LayerService(
+        repository=repositories.LayerRepository(session=session)
+    )

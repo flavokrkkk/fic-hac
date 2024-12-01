@@ -2,14 +2,9 @@ from uuid import uuid4
 from pydantic import UUID4
 
 
-from backend.database.models.location import UserLocation
 from backend.database.models.user import User
-from backend.dto.location_dto import (
-    AddUserLocationModel,
-    BaseUserLocationModel,
-)
 from backend.dto.user_dto import BaseUserModel, UserProfileModel
-from backend.errors.user_errors import UserNotFoundError
+from backend.errors.user_errors import UserAlreadySaveObjectError, UserNotFoundError
 from backend.repositories import UserRepository
 from backend.services import BaseService
 
@@ -25,10 +20,7 @@ class UserService(BaseService):
         user = await self.repository.get_item(user_id)
         return await self.model_dump(user, UserProfileModel)
 
-    async def get_user_saved_locations(
-        self, user_id: int
-    ) -> list[BaseUserLocationModel]:
-        user: User = await self.repository.get_item(user_id)
-        return await self.dump_items(
-            user.saved_locations, BaseUserLocationModel
-        )
+    async def add_user_geo_object(self, user_id: int, geo_object_id: int):
+        if await self.repository.check_exist_object_in_saved(user_id, geo_object_id):
+            raise UserAlreadySaveObjectError()
+        await self.repository.add_user_geo_object(user_id, geo_object_id)

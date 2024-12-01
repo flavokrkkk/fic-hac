@@ -9,3 +9,4 @@ redis
 bcrypt
 passlib
 environs
+psycopg2-binary

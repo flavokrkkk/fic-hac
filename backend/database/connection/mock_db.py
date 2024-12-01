@@ -22,11 +22,22 @@ async def create_test_db(session: AsyncSession):
         await session.close()
         return
     
+    photos = {
+        'Трубопровод': 'https://storage.yandexcloud.net/mago-storage/image_643919550.jpeg',
+        'Газопровод': 'https://storage.yandexcloud.net/mago-storage/foto-verkhnee-dzhemete.jpg',
+        'Теплосеть': 'https://storage.yandexcloud.net/mago-storage/KSP_018006_00008_1_t222_143538.jpg',
+        'Кабель': 'https://storage.yandexcloud.net/mago-storage/755404694639425.jpg'
+    }
     with open(os.path.join(os.getcwd(), 'backend', 'database', 'connection', 'test_db.json'), 'r') as file:
         test_json = file.read()
         test_jsons = jsn.loads(test_json)
 
     for json in test_jsons:
+        json["properties"]["depth"] = (
+            ~json["properties"]["depth"] 
+            if json["properties"]["type"] == "Газопровод"
+            else json["properties"]["depth"]
+        )
         geo_object_type = (
             await session.execute(
                 select(GeoObjectType).where(
@@ -55,12 +66,21 @@ async def create_test_db(session: AsyncSession):
                 )
             )
         ).scalar_one_or_none()
-
+        status = (
+            await session.execute(
+                select(GeoObjectStatus).where(
+                    GeoObjectStatus.name == json["properties"]["status"]
+                )
+            )
+        ).scalar_one_or_none()
+        if not status:
+            status = GeoObjectStatus(name=json["properties"]["status"])
+            session.add(status)
         if not global_layer:
             global_layer = GlobalLayer(name=json["global_layers"][0])
             session.add(global_layer)
         if not geo_object_type:
-            geo_object_type = GeoObjectType(name=json["properties"]["type"])
+            geo_object_type = GeoObjectType(name=json["type"])
             session.add(geo_object_type)
         if not property_type:
             property_type = PropertyType(name=json["properties"]["type"])
@@ -68,11 +88,10 @@ async def create_test_db(session: AsyncSession):
         if not geometry_type:
             geometry_type = GeometryType(name=json["geometry"]["type"])
             session.add(geometry_type)
-        status = GeoObjectStatus(name='Активный')
         geometry = GeoObjectGeometry(
             type=geometry_type,
             coordinates=[
-                Coordinate(x=coordinate[0], y=coordinate[1])
+                Coordinate(x=coordinate[0], y=coordinate[1], depth=json["properties"]["depth"])
                 for coordinate in json["geometry"]["coordinates"]
             ]
         )
@@ -81,12 +100,14 @@ async def create_test_db(session: AsyncSession):
             depth=json["properties"]["depth"],
             name=json["properties"]["name"],   
             status=status,
+            material=json["properties"]["material"]
         )
         property_type.properties.append(properties)
         geo_object = GeoObject(
             type=geo_object_type,
             properties=properties,
-            geometry=geometry
+            geometry=geometry,
+            image=photos[json["properties"]["type"]]
         )
         global_layer.geo_objects.append(geo_object)
         session.add(geo_object)

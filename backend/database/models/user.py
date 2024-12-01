@@ -1,6 +1,6 @@
-from sqlalchemy.orm import Mapped, relationship
+from sqlalchemy import ForeignKey
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 from backend.database.models.base import Base
-from backend.database.models.location import UserLocation
 
 
 class User(Base):
@@ -9,6 +9,12 @@ class User(Base):
     email: Mapped[str]
     password: Mapped[str]
 
-    saved_locations: Mapped[list["UserLocation"]] = relationship(
-        "UserLocation", back_populates="user", lazy="selectin"
+    saved_objects = relationship(
+        "GeoObject", back_populates="users_who_saved", lazy="selectin", secondary="users_geo_objects"
     )
+
+
+class UserGeoObject(Base):
+    __tablename__ = "users_geo_objects"
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
+    geo_object_id: Mapped[int] = mapped_column(ForeignKey("geo_objects.id"))
