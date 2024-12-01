@@ -42,8 +42,8 @@ class GeoObjectService(BaseService):
         await self.check_item(geo_object, GeoObjectNotFound)
         return await self._model_validate_object(geo_object, property, geometry)
 
-    async def get_all_objects(self, global_layers: list[str]) -> list[GeoObjectModel]:
-        objects = await self.repository.get_all_objects(global_layers)
+    async def get_all_objects(self, global_layers: list[str], is_negative: bool) -> list[GeoObjectModel]:
+        objects = await self.repository.get_all_objects(global_layers, is_negative)
         dump_objects = []
         for object, property, geometry in objects:
             dump_objects.append(

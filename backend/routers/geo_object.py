@@ -16,9 +16,10 @@ async def get_all_geo_objects(
     geo_object_service: Annotated[
         GeoObjectService, Depends(get_geo_object_service)
     ],
-    global_layers: list[str] | None = Query(default=None)
+    global_layers: list[str] | None = Query(default=None),
+    is_negative: bool | None = Query(default=None),
 ):
-    return await geo_object_service.get_all_objects(global_layers)
+    return await geo_object_service.get_all_objects(global_layers, is_negative)
 
 
 @router.put("/{object_id}")

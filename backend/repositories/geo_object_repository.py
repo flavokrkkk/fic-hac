@@ -37,23 +37,20 @@ class GeoObjectRepository(SqlAlchemyRepository):
         ).scalar_one_or_none()
         return geo_object, property_object, geometry
     
-    async def get_all_objects(self, global_layers: list[str]):
-        objects = []
-        all_objects = (
-            await self.session.execute(
-                select(
-                    self.model
-                ).where(
-                    self.model.global_layers.any(GlobalLayer.name.in_(global_layers))
-                    if global_layers else True
-                )
-            )
-        ).scalars().all()
-        for object in all_objects:
-            objects.append(
-                await self.get_item(object.id)
-            )
+    async def get_all_objects(self, global_layers: list[str], is_negative: bool):
+        query = select(self.model)
+
+        if global_layers:
+            query = query.where(self.model.global_layers.any(GlobalLayer.name.in_(global_layers)))
+        if is_negative is True:
+            query = query.where(GeoObjectProperty.depth < 0)
+        elif is_negative is False:
+            query = query.where(GeoObjectProperty.depth > 0)
+
+        all_objects = (await self.session.execute(query)).scalars().all()
+        objects = [await self.get_item(object.id) for object in all_objects]
         return objects
+
     
     async def update_status(self, object_id: int, new_status: StatusTypes):
         await self.session.execute( 
