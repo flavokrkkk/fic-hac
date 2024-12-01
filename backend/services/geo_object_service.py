@@ -64,4 +64,9 @@ class GeoObjectService(BaseService):
         await self.check_item(object, GeoObjectNotFound)
         await self.repository.delete_item(object_id)
 
-    # async def add_object(self, form: GeoObjectModel) -> GeoObjectModel:
+    async def get_user_saved_objects(self, user_id: int) -> list[GeoObjectModel]:
+        objects = await self.repository.get_user_saved_objects(user_id)
+        dump_objects = []
+        for object in objects:
+            dump_objects.append(await self.get_object(object))
+        return dump_objects

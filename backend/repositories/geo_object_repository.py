@@ -2,6 +2,7 @@ from ast import Await
 from sqlalchemy import select, update
 from sqlalchemy.orm import joinedload
 from backend.database.models.geo_object import GeoObject, GeoObjectGeometry, GeoObjectProperty, GlobalLayer, GlobalLayerGeoObject
+from backend.database.models.user import UserGeoObject
 from backend.dto.geo_object import UpdateGeoObjectModel
 from backend.repositories.base import SqlAlchemyRepository
 from backend.utils.enums import StatusTypes
@@ -107,3 +108,15 @@ class GeoObjectRepository(SqlAlchemyRepository):
         await self.session.commit()
         await self.session.refresh(object)
         return object
+    
+    async def get_user_saved_objects(self, user_id: int):
+        objects = (
+            await self.session.execute(
+                select(
+                    UserGeoObject.geo_object_id,
+                ).where(
+                    UserGeoObject.user_id == user_id
+                )
+            )
+        ).scalars().all()
+        return objects

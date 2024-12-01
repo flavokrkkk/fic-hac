@@ -1,6 +1,7 @@
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from backend.database.models.base import Base
+from backend.database.models.user import UserGeoObject
 
 
 class GeoObjectType(Base):
@@ -119,6 +120,13 @@ class GeoObject(Base):
         lazy="selectin", 
         uselist=True,
         secondary='global_layers_geo_objects'
+    )
+    users_who_saved = relationship(
+        "User",
+        back_populates="saved_objects", 
+        lazy="selectin", 
+        uselist=True,
+        secondary='users_geo_objects'
     )
 
 
