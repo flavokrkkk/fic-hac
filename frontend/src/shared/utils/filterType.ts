@@ -10,3 +10,18 @@ export const enum EFilterStatusTypes {
   INACTIVE = "Неактивный",
   WORK = "В работе"
 }
+
+export const enum EMapTypes {
+  UNDERGROUND = "Подземный",
+  ABOVEGROUND = "Надземный"
+}
+
+export const enum EMapTypesParse {
+  UNDERGROUND = "underground",
+  ABOVEGROUND = "aboveground"
+}
+
+export const mapTypesParse: Record<EMapTypes, EMapTypesParse> = {
+  [EMapTypes.ABOVEGROUND]: EMapTypesParse.ABOVEGROUND,
+  [EMapTypes.UNDERGROUND]: EMapTypesParse.UNDERGROUND
+}

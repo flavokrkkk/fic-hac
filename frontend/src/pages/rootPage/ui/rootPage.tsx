@@ -1,9 +1,11 @@
+import { ERoutesNames } from "@pages/routes"
+import UserIcon from "@shared/assets/social/userIcon"
 import { useActions } from "@shared/hooks/useActions"
-import { Menu, Space } from "antd"
+import { Space } from "antd"
 import { Header } from "antd/es/layout/layout"
 import Title from "antd/es/typography/Title"
 import { Suspense, useEffect } from "react"
-import { Outlet } from "react-router-dom"
+import { Link, Outlet } from "react-router-dom"
 
 const RootPage = () => {
   const { getCurrentUser } = useActions()
@@ -21,14 +23,17 @@ const RootPage = () => {
               <strong>Коммуникации</strong>
             </Title>
           </Space>
-          <Menu theme="light" mode="horizontal" defaultSelectedKeys={["1"]} className="text-lg">
-            <Menu.Item key="1" className="text-lg">
+          <section className="text-lg flex items-center space-x-5">
+            <Link to={ERoutesNames.PROFILE_PAGE} key="1" className="cursor-pointer">
+              <UserIcon />
+            </Link>
+            <div key="2" className="text-sm cursor-pointer">
               Главная
-            </Menu.Item>
-            <Menu.Item key="2" className="text-lg">
+            </div>
+            <Link to={ERoutesNames.OBJECTS_PAGE} key="3" className="text-sm cursor-pointer">
               Карта
-            </Menu.Item>
-          </Menu>
+            </Link>
+          </section>
         </div>
       </Header>
       <div className="flex h-[calc(100vh-36px)]">

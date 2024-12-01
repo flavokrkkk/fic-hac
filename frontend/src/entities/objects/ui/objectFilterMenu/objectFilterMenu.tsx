@@ -3,14 +3,15 @@ import { Collapse, InputNumberProps, Menu, Tooltip } from "antd"
 import Search from "antd/es/input/Search"
 import { ChangeEvent, FC, useState } from "react"
 import { IGeoWrapper } from "../../model"
-import CollapsePanel from "antd/es/collapse/CollapsePanel"
 import { useActions } from "@shared/hooks/useActions"
 import ObjectFilterCard from "./objectFilterCard"
-import PenIcon from "@shared/assets/social/penIcon"
+import DetailObjectCard from "../detailObjectInfo/detailObjectCard"
+import CollapsePanel from "antd/es/collapse/CollapsePanel"
+import SavedObject from "../savedObject/savedObject"
 
 interface IObjectFilterMenu {
   geoObjects: IGeoWrapper
-  filters: { pipeline: string; cable: string; gasPipeline: string }
+  filters: Record<string, string>
   statusFilter: {
     active: string
     waiting: string
@@ -32,7 +33,7 @@ const ObjectFilterMenu: FC<IObjectFilterMenu> = ({
   onCheckedFilter,
   setCleanFilter
 }) => {
-  const { setSearchObjects } = useActions()
+  const { setSearchObjects, setSavedObjects } = useActions()
 
   const [objectValue, setObjectValue] = useState("")
 
@@ -75,40 +76,11 @@ const ObjectFilterMenu: FC<IObjectFilterMenu> = ({
         </div>
         <Collapse>
           {geoObjects.features.map(object => (
-            <CollapsePanel header={object.properties.name} key={object.id}>
-              <section className="flex flex-col space-y-2">
-                <div>
-                  <section className="flex items-center space-x-2">
-                    <h1 className="font-medium">Название</h1>
-                    <span className="mt-[2px]">
-                      <PenIcon />
-                    </span>
-                  </section>
-                  <p className="leading-3 text-xs">{object.properties.name}</p>
-                </div>
-                <div>
-                  <section className="flex items-center space-x-2">
-                    <h1 className="font-medium">Тип коммуникации</h1>
-                  </section>
-
-                  <p className="leading-3 text-xs">{object.properties.type}</p>
-                </div>
-                <div>
-                  <section className="flex items-center space-x-2">
-                    <h1 className="font-medium">Глубина залегания</h1>
-                  </section>
-                  <p className="leading-3 text-xs">{object.properties.depth}</p>
-                </div>
-                <div>
-                  <section className="flex items-center space-x-2">
-                    <h1 className="font-medium">Статус</h1>
-                    <span className="mt-[2px]">
-                      <PenIcon />
-                    </span>
-                  </section>
-                  <p className="leading-3 text-xs">{object.properties.status}</p>
-                </div>
-              </section>
+            <CollapsePanel
+              header={<SavedObject object={object} setSavedObjects={setSavedObjects} />}
+              key={object.id}
+            >
+              <DetailObjectCard object={object} key={object.id} />
             </CollapsePanel>
           ))}
         </Collapse>

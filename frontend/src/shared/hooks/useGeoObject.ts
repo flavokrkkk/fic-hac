@@ -13,11 +13,12 @@ export const useGeoObject = (viewerRef: RefObject<Cesium.Viewer>) => {
       try {
         const entities = dataSource.entities.values
 
-        if (dataSource.clustering) {
-          dataSource.clustering.enabled = true
-          dataSource.clustering.pixelRange = 15
-          dataSource.clustering.minimumClusterSize = 2
-        }
+        //кластеризация объектов, убрать на время
+        // if (dataSource.clustering) {
+        //   dataSource.clustering.enabled = true
+        //   dataSource.clustering.pixelRange = 15
+        //   dataSource.clustering.minimumClusterSize = 2
+        // }
 
         entities.forEach(entity => {
           const type: IGeoObject["type"] = entity.properties?.type?.getValue() || "unknown"
@@ -46,7 +47,6 @@ export const useGeoObject = (viewerRef: RefObject<Cesium.Viewer>) => {
             } else {
               entity.billboard = undefined
             }
-
             entity.label = new Cesium.LabelGraphics({
               text: `Тип: ${type}\nСтатус: ${status}`,
               font: "14pt sans-serif",
@@ -55,11 +55,28 @@ export const useGeoObject = (viewerRef: RefObject<Cesium.Viewer>) => {
               outlineWidth: 2,
               pixelOffset: new Cesium.Cartesian2(0, -50),
               verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
-              scale: 0.8
+              scale: 0.8,
+              show: false
             })
 
             entity.position = midpoint
           }
+          const updateLabelVisibility = () => {
+            const cameraPosition = viewer.camera.positionWC
+            const entityPosition = entity.position?.getValue(Cesium.JulianDate.now())
+
+            if (!entityPosition) return
+
+            const distance = Cesium.Cartesian3.distance(cameraPosition, entityPosition)
+
+            const labelVisibilityDistance = 500
+
+            if (entity.label) {
+              entity.label.show = new Cesium.ConstantProperty(distance < labelVisibilityDistance)
+            }
+          }
+
+          viewer.scene.camera.changed.addEventListener(updateLabelVisibility)
         })
 
         const handler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas)

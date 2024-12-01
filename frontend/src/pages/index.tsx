@@ -9,6 +9,7 @@ const ObjectDetailsPage = lazy(() => import("@pages/objectPage/ui/objectDetailsP
 const AuthPage = lazy(() => import("@pages/authPage"))
 const RegisterPage = lazy(() => import("@pages/authPage/ui/registerPage/ui"))
 const LoginPage = lazy(() => import("@pages/authPage/ui/loginPage/ui"))
+const ProfilePage = lazy(() => import("@pages/profilePage"))
 
 export const router = createBrowserRouter([
   {
@@ -26,6 +27,10 @@ export const router = createBrowserRouter([
         {
           path: ERoutesNames.OBJECTS_DETAILS_PAGE,
           element: <ObjectDetailsPage />
+        },
+        {
+          path: ERoutesNames.PROFILE_PAGE,
+          element: <ProfilePage />
         }
       ])
     ]

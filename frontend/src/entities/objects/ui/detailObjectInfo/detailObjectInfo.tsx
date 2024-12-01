@@ -13,16 +13,12 @@ interface IDetailObjectInfo {
 }
 
 const DetailObjectInfo: FC<IDetailObjectInfo> = ({ selectedObject }) => {
+  console.log(selectedObject)
   return (
     <div>
       {selectedObject ? (
         <div>
-          <Card
-            hoverable
-            bordered={false}
-            cover={<img alt="object" src="/path_to_image_or_icon.svg" />}
-            style={{ marginBottom: 20 }}
-          >
+          <Card hoverable bordered={false} style={{ marginBottom: 20 }}>
             <Title level={4}>{selectedObject.properties.name}</Title>
             <Descriptions bordered column={1}>
               <Descriptions.Item label="Тип" span={3}>
@@ -40,7 +36,11 @@ const DetailObjectInfo: FC<IDetailObjectInfo> = ({ selectedObject }) => {
               </Descriptions.Item>
             </Descriptions>
           </Card>
-
+          <img
+            src={selectedObject.image}
+            alt="Object Cover"
+            style={{ width: "100%", height: "auto" }}
+          />
           <Space direction="vertical" size="middle" style={{ width: "100%" }}>
             {selectedObject.properties.status === "Активный" ? (
               <Space size="middle" style={{ color: "green" }}>

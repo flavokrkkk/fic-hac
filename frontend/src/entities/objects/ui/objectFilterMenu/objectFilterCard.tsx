@@ -1,10 +1,12 @@
-import { EFilterStatusTypes, EFilterTypes } from "@shared/utils/filterType"
+import { useAppSelector } from "@shared/hooks/useAppSelector"
+import { EFilterStatusTypes } from "@shared/utils/filterType"
 import { InputNumberProps, Menu, Slider } from "antd"
 import clsx from "clsx"
 import { FC } from "react"
+import { objectSelector } from "../../model"
 
 interface IObjectFilterCard {
-  filters: { pipeline: string; cable: string; gasPipeline: string }
+  filters: Record<string, string>
   statusFilter: {
     active: string
     waiting: string
@@ -26,6 +28,8 @@ const ObjectFilterCard: FC<IObjectFilterCard> = ({
   onCheckedStatusFilter,
   setCleanFilter
 }) => {
+  const { geoObjectType } = useAppSelector(objectSelector)
+
   return (
     <section className=" flex flex-col justify-start">
       <div className="flex justify-between items-center mb-3">
@@ -35,39 +39,22 @@ const ObjectFilterCard: FC<IObjectFilterCard> = ({
         </span>
       </div>
       <section className="space-y-3">
-        <div className="text-black space-y-2">
-          <h3 className="text-black font-semibold">Тип коммуникации</h3>
-          <div className="flex space-x-2">
-            <button
-              onClick={onCheckedFilter}
-              value={`${EFilterTypes.PIPELINE}|pipeline`}
-              className={clsx(
-                "border px-2 py-[2px] rounded-2xl",
-                filters["pipeline"] && "bg-black text-white"
-              )}
-            >
-              Трубопровод
-            </button>
-            <button
-              onClick={onCheckedFilter}
-              value={`${EFilterTypes.CABLE}|cable`}
-              className={clsx(
-                "border px-2 py-[2px] rounded-2xl",
-                filters["cable"] && "bg-black text-white"
-              )}
-            >
-              Кабель
-            </button>
-            <button
-              value={`${EFilterTypes.GAS_PIPELINE}|gasPipeline`}
-              className={clsx(
-                "border px-2 py-[2px] rounded-2xl",
-                filters["gasPipeline"] && "bg-black text-white"
-              )}
-              onClick={onCheckedFilter}
-            >
-              Газопровод
-            </button>
+        <div className="text-black space-y-4">
+          <h3 className="text-black font-semibold text-lg">Тип коммуникации</h3>
+          <div className="flex flex-wrap gap-2">
+            {Object.keys(geoObjectType).map(key => (
+              <button
+                key={key}
+                onClick={onCheckedFilter}
+                value={`${key}|${key}`}
+                className={clsx(
+                  "border px-2 py-1 rounded-2xl text-sm",
+                  filters[key] && "bg-black text-white"
+                )}
+              >
+                {key}
+              </button>
+            ))}
           </div>
         </div>
         <div className="space-y-2">

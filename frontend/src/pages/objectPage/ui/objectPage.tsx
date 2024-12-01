@@ -6,14 +6,24 @@ import { useEffect, useState } from "react"
 
 const ObjectPage = () => {
   const { filterGeoObjects } = useAppSelector(objectSelector)
-  const { getAllObjects } = useActions()
+  const { getAllObjects, getStatusObject } = useActions()
   const [selectedLayer, setSelectedLayer] = useState<string>("Выбрать слой")
+  const [selectedMapType, setSelectedMapType] = useState<boolean>(false)
 
   const handleChange = (value: string) => setSelectedLayer(value)
+  const handleChangeMapType = (value: boolean) => setSelectedMapType(value)
 
   useEffect(() => {
-    getAllObjects(["Выбрать слой", "Выбрать все"].includes(selectedLayer) ? "" : selectedLayer)
-  }, [selectedLayer])
+    getAllObjects(
+      ["Выбрать слой", "Выбрать все"].includes(selectedLayer)
+        ? { query: "", is_negative: selectedMapType }
+        : { query: selectedLayer, is_negative: selectedMapType }
+    )
+  }, [selectedLayer, selectedMapType])
+
+  useEffect(() => {
+    getStatusObject()
+  }, [])
 
   return (
     <div className="h-full">
@@ -21,6 +31,7 @@ const ObjectPage = () => {
         geoObjects={filterGeoObjects}
         selectedLayer={selectedLayer}
         handleChange={handleChange}
+        handleChangeMapType={handleChangeMapType}
       />
     </div>
   )

@@ -17,7 +17,6 @@ export const axiosWithAuth = axios.create(baseQueryInstance)
 
 axiosWithAuth.interceptors.request.use(config => {
   const token = TokenService.getAccessToken()
-  console.log(token)
   if (config && config.headers && token) {
     config.headers["Authorization"] = `Bearer ${token}`
   } else {

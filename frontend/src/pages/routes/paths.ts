@@ -4,5 +4,6 @@ export const enum ERoutesNames {
   AUTH_PAGE = "/auth",
   REGISTER_PAGE = "/auth/register",
   OBJECTS_PAGE = "/objects",
+  PROFILE_PAGE = "/profile",
   OBJECTS_DETAILS_PAGE = "/objects/:id"
 }
